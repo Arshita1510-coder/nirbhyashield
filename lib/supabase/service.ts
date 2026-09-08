@@ -1,6 +1,6 @@
 import { supabase, isSupabaseConfigured } from './client';
 import { nirbhayaStore } from './mock-store';
-import { TrustedContact, SOSSession, SOSLocation, SafePoint, ScamCheck, InterviewCheckin, SafetyReport } from './types';
+import { TrustedContact, SOSSession, SOSLocation, SafePoint, TransitCheckin, ScamCheck, InterviewCheckin, SafetyReport } from './types';
 
 export class SupabaseService {
   
