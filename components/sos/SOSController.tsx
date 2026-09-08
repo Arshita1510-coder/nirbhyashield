@@ -141,14 +141,32 @@ export default function SOSController() {
 
   // Trigger SOS session & dispatch API call
   const triggerSOS = async (triggerType: SOSSession['trigger_type']) => {
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        await dispatchSOSAPI(triggerType, pos.coords.latitude, pos.coords.longitude);
-      },
-      async () => {
-        await dispatchSOSAPI(triggerType, 28.6139, 77.2090);
-      }
-    );
+    const defaultLat = 28.6139;
+    const defaultLng = 77.2090;
+
+    // 1. Instant local store trigger for 0ms latency UI response
+    const instantSession = rakshaStore.triggerSOS(triggerType, defaultLat, defaultLng);
+    setActiveSession(instantSession);
+    setLocations(rakshaStore.getLocations(instantSession.id));
+
+    // 2. Fetch real GPS coordinates in background if available
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          rakshaStore.addLocationBreadcrumb(instantSession.id, lat, lng, 90, 4.2);
+          setLocations(rakshaStore.getLocations(instantSession.id));
+          await dispatchSOSAPI(triggerType, lat, lng);
+        },
+        async () => {
+          await dispatchSOSAPI(triggerType, defaultLat, defaultLng);
+        },
+        { timeout: 3000, maximumAge: 10000 }
+      );
+    } else {
+      await dispatchSOSAPI(triggerType, defaultLat, defaultLng);
+    }
   };
 
   const dispatchSOSAPI = async (triggerType: string, lat: number, lng: number) => {
@@ -163,7 +181,7 @@ export default function SOSController() {
         setActiveSession(data.session);
       }
     } catch (e) {
-      rakshaStore.triggerSOS(triggerType as any, lat, lng);
+      // rakshaStore already updated synchronously above
     }
   };
 
