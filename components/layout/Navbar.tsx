@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AlertTriangle, Bell, Bus, CheckCircle2, ChevronDown, Home, Navigation, Radio, ShieldAlert, ShieldCheck, User, Key, Settings, LogOut } from 'lucide-react';
@@ -25,9 +25,30 @@ export default function Navbar() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
+  // Refs for click-outside auto-close
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const notificationsRef = useRef<HTMLDivElement>(null);
+
   // Settings Modal State
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [modalTab, setModalTab] = useState<'profile' | 'security' | 'vault' | 'notifications'>('profile');
+
+  // Auto-close dropdowns when clicking anywhere outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const closeMenus = () => { setIsNotificationsOpen(false); setIsUserMenuOpen(false); };
 
@@ -84,7 +105,7 @@ export default function Navbar() {
             <nav aria-label="Primary navigation" className="hidden lg:flex min-w-0 flex-1 items-center justify-center gap-1.5">{navLinks()}</nav>
 
             <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
-              <div className="relative">
+              <div className="relative" ref={notificationsRef}>
                 <button type="button" aria-label="Notifications" aria-expanded={isNotificationsOpen} onClick={() => { setIsNotificationsOpen(!isNotificationsOpen); setIsUserMenuOpen(false); }} className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white">
                   <Bell className="h-4 w-4" /><span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-rose-400 ring-2 ring-slate-950" />
                 </button>
@@ -97,7 +118,7 @@ export default function Navbar() {
               </div>
 
               {/* USER PROFILE & SETTINGS DROPDOWN (TOP RIGHT) */}
-              <div className="relative border-l border-slate-800 pl-1.5 sm:pl-2">
+              <div className="relative border-l border-slate-800 pl-1.5 sm:pl-2" ref={userMenuRef}>
                 <button
                   type="button"
                   aria-expanded={isUserMenuOpen}
