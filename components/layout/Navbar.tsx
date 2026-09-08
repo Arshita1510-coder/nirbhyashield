@@ -119,76 +119,32 @@ export default function Navbar() {
                 </button>
 
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 top-12 z-50 w-72 overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900 p-2 shadow-2xl shadow-black/60 animate-in fade-in duration-150">
+                  <div className="absolute right-0 top-12 z-50 w-64 overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900 p-2 shadow-2xl shadow-black/60 animate-in fade-in duration-150">
                     
                     {/* User Profile Card Header */}
                     <div className="flex items-center gap-3 border-b border-slate-800 p-2.5 bg-slate-950/60 rounded-xl mb-1.5">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-rose-600 to-rose-400 text-xs font-extrabold text-white shadow-md">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-rose-600 to-rose-400 text-xs font-extrabold text-white shadow-md">
                         AS
                       </div>
                       <div className="min-w-0">
                         <span className="block text-xs font-bold text-white truncate">Arshita Sharma</span>
                         <span className="block text-[10px] text-slate-400 truncate">arshita.sharma@rakshashield.org</span>
-                        <span className="inline-block mt-0.5 text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-semibold">
-                          ● Guardian Verified
-                        </span>
                       </div>
                     </div>
 
-                    {/* Section 1: User Settings & Safety Controls */}
-                    <div className="px-2 pb-1 pt-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-                      User Profile & Safety Preferences
-                    </div>
-
+                    {/* 1. Profile Settings */}
                     <button
                       onClick={() => openSettingsModal('profile')}
                       className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white text-left"
                     >
-                      <User className="h-4 w-4 shrink-0 text-rose-400" />
+                      <Settings className="h-4 w-4 shrink-0 text-rose-400" />
                       <div>
-                        <span className="block text-xs font-semibold">My Profile & Emergency Info</span>
-                        <span className="block text-[10px] text-slate-500">Medical notes, phone & home address</span>
+                        <span className="block text-xs font-semibold">Profile Settings</span>
+                        <span className="block text-[10px] text-slate-500">Duress PINs, voice & contacts</span>
                       </div>
                     </button>
 
-                    <button
-                      onClick={() => openSettingsModal('security')}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white text-left"
-                    >
-                      <Key className="h-4 w-4 shrink-0 text-amber-400" />
-                      <div>
-                        <span className="block text-xs font-semibold">Duress PIN & Voice Keyword</span>
-                        <span className="block text-[10px] text-slate-500">Silent false PIN & voice triggers</span>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => openSettingsModal('vault')}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white text-left"
-                    >
-                      <Radio className="h-4 w-4 shrink-0 text-emerald-400" />
-                      <div>
-                        <span className="block text-xs font-semibold">Audio Vault & Storage</span>
-                        <span className="block text-[10px] text-slate-500">Supabase RLS token validity</span>
-                      </div>
-                    </button>
-
-                    <button
-                      onClick={() => openSettingsModal('notifications')}
-                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white text-left"
-                    >
-                      <Settings className="h-4 w-4 shrink-0 text-cyan-400" />
-                      <div>
-                        <span className="block text-xs font-semibold">Alert Siren & Push Preferences</span>
-                        <span className="block text-[10px] text-slate-500">Alarm volume & vibration toggles</span>
-                      </div>
-                    </button>
-
-                    {/* Section 2: Admin & Responder Hub */}
-                    <div className="mt-1.5 pt-1.5 border-t border-slate-800 px-2 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-                      Emergency Workspace
-                    </div>
-
+                    {/* 2. Responder Page */}
                     <Link
                       href="/responder"
                       onClick={closeMenus}
@@ -196,13 +152,13 @@ export default function Navbar() {
                     >
                       <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400" />
                       <div>
-                        <span className="block text-xs font-semibold">Responder Dispatch Hub</span>
-                        <span className="block text-[10px] text-slate-500">Live monitoring & emergency log</span>
+                        <span className="block text-xs font-semibold">Responder Page</span>
+                        <span className="block text-[10px] text-slate-500">Live monitoring & emergency logs</span>
                       </div>
                     </Link>
 
-                    {/* Section 3: Sign Out Simulation */}
-                    <div className="mt-1.5 pt-1.5 border-t border-slate-800">
+                    {/* 3. Log Out */}
+                    <div className="mt-1 pt-1 border-t border-slate-800">
                       <button
                         onClick={() => {
                           alert('Session Locked. Re-authenticate via Supabase Auth.');
@@ -211,7 +167,7 @@ export default function Navbar() {
                         className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-rose-400 transition-all hover:bg-rose-950/60 hover:text-rose-300 text-left"
                       >
                         <LogOut className="h-4 w-4 shrink-0" />
-                        <span className="text-xs font-bold">Lock Session / Sign Out</span>
+                        <span className="text-xs font-bold">Log Out</span>
                       </button>
                     </div>
 
