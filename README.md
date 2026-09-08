@@ -52,6 +52,25 @@
 
 ---
 
+## 📸 Application Screenshots
+
+### 1. Overview Command Hub & Safety Ecosystem
+![Overview Command Hub](docs/screenshots/overview.png)
+
+### 2. Core SOS Alert Engine
+![Core SOS Alert Engine](docs/screenshots/sos_engine.png)
+
+### 3. Spatial Safe Route Recommendation System
+![Spatial Safe Route Recommendation System](docs/screenshots/safe_routes.png)
+
+### 4. Public Transport Safety System
+![Public Transport Safety System](docs/screenshots/transit_safety.png)
+
+### 5. AI Job & Interview Scam Detector
+![AI Job & Interview Scam Detector](docs/screenshots/scam_detector.png)
+
+---
+
 ## 🛠️ Tech Stack
 
 | Category | Technology |
@@ -69,6 +88,8 @@
 
 ```
 nirbhyashield/
+├── docs/
+│   └── screenshots/              # Application UI screenshots
 ├── app/
 │   ├── layout.tsx                # Root layout with top Navbar & bottom Emergency Bar
 │   ├── page.tsx                  # Overview Hub & Emergency Contact Management
