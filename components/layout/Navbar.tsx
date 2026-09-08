@@ -7,11 +7,11 @@ import { AlertTriangle, Bell, Bus, CheckCircle2, ChevronDown, Home, Navigation, 
 import ProfileSettingsModal from './ProfileSettingsModal';
 
 const navItems = [
-  { href: '/', label: 'Overview', icon: Home },
-  { href: '/sos', label: 'SOS Alert Engine', icon: ShieldAlert },
-  { href: '/routes', label: 'Safe Routes', icon: Navigation },
-  { href: '/transit', label: 'Transit Safety', icon: Bus },
-  { href: '/scam-detector', label: 'Scam & Interview', icon: AlertTriangle },
+  { href: '/', label: 'Overview', icon: Home, badge: 'HUB' },
+  { href: '/sos', label: 'SOS Alert Engine', icon: ShieldAlert, badge: 'LIVE' },
+  { href: '/routes', label: 'Safe Routes', icon: Navigation, badge: 'GPS' },
+  { href: '/transit', label: 'Transit Safety', icon: Bus, badge: 'AUTO' },
+  { href: '/scam-detector', label: 'Scam & Interview', icon: AlertTriangle, badge: 'AI' },
 ];
 
 const notifications = [
@@ -41,10 +41,29 @@ export default function Navbar() {
     const Icon = item.icon;
     const isActive = pathname === item.href;
     return (
-      <Link key={item.href} href={item.href} onClick={closeMenus}
-        className={`flex items-center gap-1.5 rounded-lg whitespace-nowrap transition-colors ${compact ? 'px-2.5 py-1.5 text-[11px]' : 'px-2.5 py-2 text-xs'} ${isActive ? 'bg-rose-500/15 text-rose-300 ring-1 ring-inset ring-rose-500/30 font-semibold' : 'text-slate-400 hover:bg-slate-800/70 hover:text-slate-100 font-medium'}`}>
-        <Icon className={compact ? 'h-3.5 w-3.5 shrink-0' : 'h-4 w-4 shrink-0'} />
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={closeMenus}
+        className={`flex items-center gap-2 rounded-xl whitespace-nowrap transition-all ${
+          compact ? 'px-3 py-1.5 text-xs font-semibold' : 'px-3.5 py-2 text-xs font-bold'
+        } ${
+          isActive
+            ? 'bg-rose-500/15 text-rose-200 border border-rose-500/40 shadow-md shadow-rose-950/40 font-bold scale-[1.02]'
+            : 'bg-slate-900/60 text-slate-300 border border-slate-800/80 hover:bg-slate-800/90 hover:text-white hover:border-slate-700'
+        }`}
+      >
+        <div className={`p-1 rounded-lg ${isActive ? 'bg-rose-500/25 text-rose-300' : 'bg-slate-800/60 text-slate-400'}`}>
+          <Icon className={compact ? 'h-3.5 w-3.5 shrink-0' : 'h-4 w-4 shrink-0'} />
+        </div>
         <span>{item.label}</span>
+        {item.badge && !compact && (
+          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider ${
+            isActive ? 'bg-rose-600 text-white shadow-sm shadow-rose-900/50' : 'bg-slate-800 text-slate-400 border border-slate-700'
+          }`}>
+            {item.badge}
+          </span>
+        )}
       </Link>
     );
   });
@@ -62,7 +81,7 @@ export default function Navbar() {
               </div>
             </Link>
 
-            <nav aria-label="Primary navigation" className="hidden 2xl:flex min-w-0 flex-1 items-center justify-center gap-0.5">{navLinks()}</nav>
+            <nav aria-label="Primary navigation" className="hidden lg:flex min-w-0 flex-1 items-center justify-center gap-1.5">{navLinks()}</nav>
 
             <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
               <div className="relative">
@@ -76,8 +95,6 @@ export default function Navbar() {
                   </button>)}
                 </div>}
               </div>
-
-              <div className="hidden items-center gap-1.5 rounded-lg px-2 py-1.5 text-[11px] font-medium text-slate-400 sm:flex"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" /><span className="hidden md:inline">Realtime Connected</span><span className="md:hidden">Online</span></div>
 
               {/* USER PROFILE & SETTINGS DROPDOWN (TOP RIGHT) */}
               <div className="relative border-l border-slate-800 pl-1.5 sm:pl-2">
@@ -205,7 +222,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        <nav aria-label="Primary navigation" className="2xl:hidden flex gap-0.5 overflow-x-auto border-t border-slate-800/70 px-2 py-1.5 [scrollbar-width:none] sm:px-4">{navLinks(true)}</nav>
+        <nav aria-label="Primary navigation" className="lg:hidden flex gap-1.5 overflow-x-auto border-t border-slate-800/70 px-3 py-2 [scrollbar-width:none] sm:px-4">{navLinks(true)}</nav>
       </header>
 
       {/* Render Profile & Settings Modal */}
