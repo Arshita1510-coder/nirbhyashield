@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Clock, ShieldAlert, CheckCircle2, Search, Calendar, PhoneCall, AlertCircle, Share2 } from 'lucide-react';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 import { ScamCheck, InterviewCheckin } from '@/lib/supabase/types';
 
 export default function ScamDetectorPage() {
@@ -20,9 +20,9 @@ export default function ScamDetectorPage() {
   const [activeTimerSeconds, setActiveTimerSeconds] = useState<number | null>(null);
 
   useEffect(() => {
-    setCheckins(nirbhayaStore.getInterviewCheckins());
-    return nirbhayaStore.subscribe(() => {
-      setCheckins(nirbhayaStore.getInterviewCheckins());
+    setCheckins(rakshaStore.getInterviewCheckins());
+    return rakshaStore.subscribe(() => {
+      setCheckins(rakshaStore.getInterviewCheckins());
     });
   }, []);
 
@@ -40,7 +40,7 @@ export default function ScamDetectorPage() {
         setScamCheckResult(data.scam_check);
       }
     } catch (e) {
-      const result = nirbhayaStore.analyzeScam(jobText, interviewAddress);
+      const result = rakshaStore.analyzeScam(jobText, interviewAddress);
       setScamCheckResult(result);
     } finally {
       setAnalyzing(false);
@@ -49,7 +49,7 @@ export default function ScamDetectorPage() {
 
   const handleScheduleCheckin = () => {
     if (scamCheckResult) {
-      const checkin = nirbhayaStore.addInterviewCheckin(
+      const checkin = rakshaStore.addInterviewCheckin(
         scamCheckResult.id,
         new Date().toISOString(),
         durationMinutes
@@ -69,7 +69,7 @@ export default function ScamDetectorPage() {
         clearInterval(interval);
         setActiveTimerSeconds(null);
         // Missed checkin -> Escalate to SOS!
-        nirbhayaStore.updateCheckinStatus(checkinId, 'missed');
+        rakshaStore.updateCheckinStatus(checkinId, 'missed');
       }
     }, 1000);
   };
@@ -164,7 +164,7 @@ export default function ScamDetectorPage() {
               <div className="pt-2 border-t border-white/10 flex flex-wrap gap-2 justify-end">
                 <button
                   type="button"
-                  onClick={() => alert(`Interview details & location shared with ${nirbhayaStore.getContacts().length} trusted emergency contacts!`)}
+                  onClick={() => alert(`Interview details & location shared with ${rakshaStore.getContacts().length} trusted emergency contacts!`)}
                   className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-3 py-2 rounded-lg text-xs flex items-center gap-1.5 border border-slate-700"
                 >
                   <Share2 className="w-3.5 h-3.5 text-amber-400" />
@@ -247,7 +247,7 @@ export default function ScamDetectorPage() {
 
                       {isPending && (
                         <button
-                          onClick={() => nirbhayaStore.updateCheckinStatus(ci.id, 'checked_in')}
+                          onClick={() => rakshaStore.updateCheckinStatus(ci.id, 'checked_in')}
                           className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" /> Confirm Safe Check-in

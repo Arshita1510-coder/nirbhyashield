@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShieldAlert, Navigation, Bus, AlertTriangle, Users, Database, Zap, Lock, ArrowRight, ShieldCheck, PhoneCall, Radio, CheckCircle2, Clock, Phone, MapPin, Shield, Activity, HelpCircle, FileText } from 'lucide-react';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 import { supabaseService } from '@/lib/supabase/service';
 import { TrustedContact } from '@/lib/supabase/types';
 
 export default function OverviewPage() {
   const [contacts, setContacts] = useState<TrustedContact[]>([]);
-  const [activeSession, setActiveSession] = useState(nirbhayaStore.getActiveSession());
+  const [activeSession, setActiveSession] = useState(rakshaStore.getActiveSession());
   const [newContactName, setNewContactName] = useState('');
   const [newContactPhone, setNewContactPhone] = useState('');
   const [callingModal, setCallingModal] = useState<{ number: string; title: string } | null>(null);
@@ -22,10 +22,10 @@ export default function OverviewPage() {
 
   useEffect(() => {
     refreshContacts();
-    setActiveSession(nirbhayaStore.getActiveSession());
-    return nirbhayaStore.subscribe(() => {
+    setActiveSession(rakshaStore.getActiveSession());
+    return rakshaStore.subscribe(() => {
       refreshContacts();
-      setActiveSession(nirbhayaStore.getActiveSession());
+      setActiveSession(rakshaStore.getActiveSession());
     });
   }, []);
 
@@ -205,7 +205,7 @@ export default function OverviewPage() {
                 </div>
               </div>
               <button
-                onClick={() => nirbhayaStore.removeContact(contact.id)}
+                onClick={() => rakshaStore.removeContact(contact.id)}
                 className="text-xs text-slate-500 hover:text-rose-400 transition-colors p-1"
               >
                 Remove
@@ -247,7 +247,7 @@ export default function OverviewPage() {
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-semibold">
             <Activity className="w-3.5 h-3.5" /> Rapid Emergency Protocol
           </div>
-          <h2 className="text-2xl font-extrabold text-white">How NirbhayaShield Protects You</h2>
+          <h2 className="text-2xl font-extrabold text-white">How RakshaShield Protects You</h2>
           <p className="text-xs text-slate-400">
             Automated real-time safety pipeline from trigger to emergency responder arrival.
           </p>
@@ -374,7 +374,7 @@ export default function OverviewPage() {
             <ShieldCheck className="w-4 h-4" /> Privacy & Consent First
           </div>
           <p className="text-xs text-slate-300 leading-relaxed">
-            NirbhayaShield only streams location data during an explicit active SOS trigger or check-in session. Zero background tracking without user consent. Strict Supabase Row Level Security (RLS) policies guarantee location data is accessible only via tokenized emergency authorization links.
+            RakshaShield only streams location data during an explicit active SOS trigger or check-in session. Zero background tracking without user consent. Strict Supabase Row Level Security (RLS) policies guarantee location data is accessible only via tokenized emergency authorization links.
           </p>
         </div>
 

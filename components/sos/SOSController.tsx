@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 import { supabaseService } from '@/lib/supabase/service';
 import { SOSSession, SOSLocation } from '@/lib/supabase/types';
 import { ShieldAlert, Mic, Phone, CheckCircle2, Copy, Radio, Volume2, ShieldCheck, MapPin, AlertCircle } from 'lucide-react';
@@ -26,17 +26,17 @@ export default function SOSController() {
   const audioChunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
-    const current = nirbhayaStore.getActiveSession();
+    const current = rakshaStore.getActiveSession();
     setActiveSession(current);
     if (current) {
-      setLocations(nirbhayaStore.getLocations(current.id));
+      setLocations(rakshaStore.getLocations(current.id));
     }
 
-    return nirbhayaStore.subscribe(() => {
-      const updated = nirbhayaStore.getActiveSession();
+    return rakshaStore.subscribe(() => {
+      const updated = rakshaStore.getActiveSession();
       setActiveSession(updated);
       if (updated) {
-        setLocations(nirbhayaStore.getLocations(updated.id));
+        setLocations(rakshaStore.getLocations(updated.id));
       }
     });
   }, []);
@@ -163,7 +163,7 @@ export default function SOSController() {
         setActiveSession(data.session);
       }
     } catch (e) {
-      nirbhayaStore.triggerSOS(triggerType as any, lat, lng);
+      rakshaStore.triggerSOS(triggerType as any, lat, lng);
     }
   };
 
@@ -206,7 +206,7 @@ export default function SOSController() {
     e.preventDefault();
     if (pinInput === '1234' || pinInput === '0000') {
       if (activeSession) {
-        nirbhayaStore.resolveSOS(activeSession.id, 'false_alarm');
+        rakshaStore.resolveSOS(activeSession.id, 'false_alarm');
       }
       setShowPinModal(false);
       setPinInput('');

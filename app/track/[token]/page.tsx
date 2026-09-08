@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 import { SOSSession, SOSLocation } from '@/lib/supabase/types';
 import { ShieldAlert, Battery, Radio, MapPin, Clock, Mic, CheckCircle2, Phone } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -25,12 +25,12 @@ export default function PublicLiveTrackPage() {
   const [locations, setLocations] = useState<SOSLocation[]>([]);
 
   useEffect(() => {
-    const data = nirbhayaStore.getSessionByToken(token);
+    const data = rakshaStore.getSessionByToken(token);
     setSession(data.session);
     setLocations(data.locations);
 
-    return nirbhayaStore.subscribe(() => {
-      const updated = nirbhayaStore.getSessionByToken(token);
+    return rakshaStore.subscribe(() => {
+      const updated = rakshaStore.getSessionByToken(token);
       setSession(updated.session);
       setLocations(updated.locations);
     });

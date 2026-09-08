@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Job description or address is required.' }, { status: 400 });
     }
 
-    const result = nirbhayaStore.analyzeScam(job_text || '', interview_address || '');
+    const result = rakshaStore.analyzeScam(job_text || '', interview_address || '');
 
     return NextResponse.json({
       success: true,

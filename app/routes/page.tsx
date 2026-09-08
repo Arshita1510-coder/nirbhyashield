@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Navigation, ShieldCheck, AlertTriangle, MapPin, Zap, CheckCircle2, Radio, Info, LocateFixed, Compass, Loader2 } from 'lucide-react';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 import { SafePoint, SafetyReport } from '@/lib/supabase/types';
 
 const SafeRouteMap = dynamic(() => import('@/components/maps/SafeRouteMap'), {
@@ -100,7 +100,7 @@ export default function SafeRoutesPage() {
     // After 3 seconds, simulate 150m deviation off safe path
     setTimeout(() => {
       setDeviationAlert(true);
-      nirbhayaStore.triggerSOS('route_deviation');
+      rakshaStore.triggerSOS('route_deviation');
     }, 3500);
   };
 

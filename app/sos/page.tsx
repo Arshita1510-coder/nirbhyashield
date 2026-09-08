@@ -1,7 +1,7 @@
 import SOSController from '@/components/sos/SOSController';
 
 export const metadata = {
-  title: 'Core SOS Alert Engine — NirbhayaShield',
+  title: 'Core SOS Alert Engine — RakshaShield',
 };
 
 export default function SOSPage() {

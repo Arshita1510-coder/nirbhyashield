@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Bus, Train, Car, QrCode, ShieldAlert, CheckCircle2, AlertTriangle, Radio, Send, MapPin, Navigation, ExternalLink } from 'lucide-react';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 import { supabaseService } from '@/lib/supabase/service';
 import { SOSSession } from '@/lib/supabase/types';
 import Link from 'next/link';
@@ -21,9 +21,9 @@ export default function TransitSafetyPage() {
   const [activeSession, setActiveSession] = useState<SOSSession | null>(null);
 
   useEffect(() => {
-    setActiveSession(nirbhayaStore.getActiveSession());
-    return nirbhayaStore.subscribe(() => {
-      setActiveSession(nirbhayaStore.getActiveSession());
+    setActiveSession(rakshaStore.getActiveSession());
+    return rakshaStore.subscribe(() => {
+      setActiveSession(rakshaStore.getActiveSession());
     });
   }, []);
 
@@ -313,7 +313,7 @@ export default function TransitSafetyPage() {
 
                   <button
                     onClick={() => {
-                      nirbhayaStore.resolveSOS(activeSession.id, 'resolved');
+                      rakshaStore.resolveSOS(activeSession.id, 'resolved');
                       setActiveSession(null);
                     }}
                     className="bg-rose-950 hover:bg-rose-900 text-white font-bold px-3 py-2 rounded-xl text-xs border border-rose-400/40 transition-all"

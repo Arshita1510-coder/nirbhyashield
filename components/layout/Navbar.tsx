@@ -29,7 +29,7 @@ export default function Navbar() {
             </div>
             <div>
               <div className="font-bold text-lg text-white flex items-center gap-2">
-                NirbhayaShield <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30">v2.0</span>
+                RakshaShield <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-semibold border border-rose-500/30">v2.0</span>
               </div>
               <p className="text-[11px] text-slate-400 hidden sm:block">Unified Women & Public Safety Platform</p>
             </div>

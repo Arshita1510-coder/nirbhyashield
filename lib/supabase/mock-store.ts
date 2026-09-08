@@ -82,7 +82,7 @@ const INITIAL_REPORTS: SafetyReport[] = [
 
 type Listener = () => void;
 
-class NirbhayaStore {
+class RakshaStore {
   private contacts: TrustedContact[] = INITIAL_CONTACTS;
   private activeSession: SOSSession | null = null;
   private locations: Record<string, SOSLocation[]> = {};
@@ -94,7 +94,7 @@ class NirbhayaStore {
 
   constructor() {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('nirbhaya_store_state');
+      const saved = localStorage.getItem('raksha_store_state') || localStorage.getItem('nirbhaya_store_state');
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -111,7 +111,7 @@ class NirbhayaStore {
 
   private persist() {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('nirbhaya_store_state', JSON.stringify({
+      localStorage.setItem('raksha_store_state', JSON.stringify({
         activeSession: this.activeSession,
         contacts: this.contacts,
         locations: this.locations,
@@ -321,4 +321,5 @@ class NirbhayaStore {
   }
 }
 
-export const nirbhayaStore = new NirbhayaStore();
+export const rakshaStore = new RakshaStore();
+export const nirbhayaStore = rakshaStore;

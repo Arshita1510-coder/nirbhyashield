@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, Radio, MapPin, Battery, Clock, Mic, PhoneCall, CheckCircle2, ShieldAlert, AlertTriangle, ExternalLink, FileText, Activity } from 'lucide-react';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 import { supabaseService } from '@/lib/supabase/service';
 import { SOSSession, SOSLocation, SafetyReport } from '@/lib/supabase/types';
 import Link from 'next/link';
@@ -10,16 +10,16 @@ import Link from 'next/link';
 export default function ResponderPage() {
   const [activeSession, setActiveSession] = useState<SOSSession | null>(null);
   const [locations, setLocations] = useState<SOSLocation[]>([]);
-  const [contacts, setContacts] = useState(nirbhayaStore.getContacts());
+  const [contacts, setContacts] = useState(rakshaStore.getContacts());
   const [safetyReports, setSafetyReports] = useState<SafetyReport[]>([]);
 
   const refreshData = async () => {
-    const current = nirbhayaStore.getActiveSession();
+    const current = rakshaStore.getActiveSession();
     setActiveSession(current);
     if (current) {
-      setLocations(nirbhayaStore.getLocations(current.id));
+      setLocations(rakshaStore.getLocations(current.id));
     }
-    setContacts(nirbhayaStore.getContacts());
+    setContacts(rakshaStore.getContacts());
     const reports = await supabaseService.getSafetyReports();
     setSafetyReports(reports);
   };
@@ -27,7 +27,7 @@ export default function ResponderPage() {
   useEffect(() => {
     refreshData();
 
-    return nirbhayaStore.subscribe(() => {
+    return rakshaStore.subscribe(() => {
       refreshData();
     });
   }, []);
@@ -86,7 +86,7 @@ export default function ResponderPage() {
                   </Link>
 
                   <button
-                    onClick={() => nirbhayaStore.resolveSOS(activeSession.id, 'resolved')}
+                    onClick={() => rakshaStore.resolveSOS(activeSession.id, 'resolved')}
                     className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-950/50"
                   >
                     <CheckCircle2 className="w-4 h-4" /> Resolve SOS

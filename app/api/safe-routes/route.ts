@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 
 export async function POST(req: Request) {
   try {
@@ -9,8 +9,8 @@ export async function POST(req: Request) {
     const originLat = typeof reqLat === 'number' ? reqLat : 28.6139;
     const originLng = typeof reqLng === 'number' ? reqLng : 77.2090;
 
-    const safePoints = nirbhayaStore.getSafePoints();
-    const safetyReports = nirbhayaStore.getSafetyReports();
+    const safePoints = rakshaStore.getSafePoints();
+    const safetyReports = rakshaStore.getSafetyReports();
 
     // Calculate safety scores for Fastest vs Safest Routes
     const fastestScore = Math.floor(62 + Math.random() * 8); // ~65/100

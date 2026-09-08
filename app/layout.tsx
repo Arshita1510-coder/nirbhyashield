@@ -4,7 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import EmergencyBar from '@/components/layout/EmergencyBar';
 
 export const metadata: Metadata = {
-  title: 'NirbhayaShield — Women & Public Safety Platform',
+  title: 'RakshaShield — Women & Public Safety Platform',
   description: 'Core SOS Alert Engine, Safe Route Recommendation, Transit Safety, and Job/Interview Scam Detection powered by Supabase & PostGIS.',
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
           {children}
         </main>
         <footer className="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
-          <p>© 2026 NirbhayaShield. Built for rapid, consent-driven safety assistance with Supabase & PostGIS.</p>
+          <p>© 2026 RakshaShield. Built for rapid, consent-driven safety assistance with Supabase & PostGIS.</p>
         </footer>
       </body>
     </html>

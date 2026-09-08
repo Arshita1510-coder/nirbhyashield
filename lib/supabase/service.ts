@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConfigured } from './client';
-import { nirbhayaStore } from './mock-store';
+import { rakshaStore } from './mock-store';
 import { TrustedContact, SOSSession, SOSLocation, SafePoint, TransitCheckin, ScamCheck, InterviewCheckin, SafetyReport } from './types';
 
 export class SupabaseService {
@@ -10,7 +10,7 @@ export class SupabaseService {
       const { data, error } = await supabase.from('trusted_contacts').select('*');
       if (!error && data) return data as TrustedContact[];
     }
-    return nirbhayaStore.getContacts();
+    return rakshaStore.getContacts();
   }
 
   async addContact(contact: Omit<TrustedContact, 'id' | 'user_id' | 'created_at'>): Promise<TrustedContact> {
@@ -23,14 +23,14 @@ export class SupabaseService {
       if (!error && data) return data as TrustedContact;
       if (error) console.error('Supabase addContact error:', error);
     }
-    return nirbhayaStore.addContact(contact);
+    return rakshaStore.addContact(contact);
   }
 
   async removeContact(id: string): Promise<void> {
     if (isSupabaseConfigured && supabase) {
       await supabase.from('trusted_contacts').delete().eq('id', id);
     }
-    nirbhayaStore.removeContact(id);
+    rakshaStore.removeContact(id);
   }
 
   // 2. SOS Engine
@@ -44,7 +44,7 @@ export class SupabaseService {
       if (!error && data) return data as SOSSession;
       if (error) console.error('Supabase createSOSSession error:', error);
     }
-    return nirbhayaStore.triggerSOS(triggerType, 28.6139, 77.2090, vehicleId);
+    return rakshaStore.triggerSOS(triggerType, 28.6139, 77.2090, vehicleId);
   }
 
   async addSOSLocation(sessionId: string, lat: number, lng: number, batteryPct = 80, speed = 0): Promise<SOSLocation> {
@@ -60,7 +60,7 @@ export class SupabaseService {
       ]).select().single();
       if (!error && data) return data as SOSLocation;
     }
-    return nirbhayaStore.addLocationBreadcrumb(sessionId, lat, lng, batteryPct, speed);
+    return rakshaStore.addLocationBreadcrumb(sessionId, lat, lng, batteryPct, speed);
   }
 
   async resolveSOS(sessionId: string, status: 'resolved' | 'false_alarm'): Promise<void> {
@@ -70,7 +70,7 @@ export class SupabaseService {
         resolved_at: new Date().toISOString(),
       }).eq('id', sessionId);
     }
-    nirbhayaStore.resolveSOS(sessionId, status);
+    rakshaStore.resolveSOS(sessionId, status);
   }
 
   // 3. Supabase Realtime Subscription Channel
@@ -90,8 +90,8 @@ export class SupabaseService {
       };
     }
 
-    return nirbhayaStore.subscribe(() => {
-      const locs = nirbhayaStore.getLocations(sessionId);
+    return rakshaStore.subscribe(() => {
+      const locs = rakshaStore.getLocations(sessionId);
       if (locs.length > 0) {
         callback(locs[locs.length - 1]);
       }
@@ -104,7 +104,7 @@ export class SupabaseService {
       const { data, error } = await supabase.from('safe_points').select('*');
       if (!error && data) return data as SafePoint[];
     }
-    return nirbhayaStore.getSafePoints();
+    return rakshaStore.getSafePoints();
   }
 
   async getSafetyReports(): Promise<SafetyReport[]> {
@@ -112,7 +112,7 @@ export class SupabaseService {
       const { data, error } = await supabase.from('safety_reports').select('*');
       if (!error && data) return data as SafetyReport[];
     }
-    return nirbhayaStore.getSafetyReports();
+    return rakshaStore.getSafetyReports();
   }
 
   // 6. Transit Check-in & Safety Reports
@@ -146,7 +146,7 @@ export class SupabaseService {
       if (!error && data) return data as SafetyReport;
       if (error) console.error('Supabase addSafetyReport error:', error);
     }
-    return nirbhayaStore.addSafetyReport(report);
+    return rakshaStore.addSafetyReport(report);
   }
 }
 

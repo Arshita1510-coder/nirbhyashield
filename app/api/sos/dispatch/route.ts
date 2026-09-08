@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     const smsPayloads = contacts.map(contact => ({
       to: contact.phone,
-      message: `[EMERGENCY ALERT] NirbhayaShield SOS Triggered! User needs urgent assistance. Track real-time location & live audio preview here: ${trackingUrl}`,
+      message: `[EMERGENCY ALERT] RakshaShield SOS Triggered! User needs urgent assistance. Track real-time location & live audio preview here: ${trackingUrl}`,
     }));
 
     return NextResponse.json({

@@ -1,4 +1,4 @@
--- NirbhayaShield — Idempotent Safe PostgreSQL Migration Script
+-- RakshaShield — Idempotent Safe PostgreSQL Migration Script
 
 -- 1. Enable PostGIS spatial query extension
 create extension if not exists postgis;

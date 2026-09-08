@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { rakshaStore } from '@/lib/supabase/mock-store';
 import { SOSSession } from '@/lib/supabase/types';
 import Link from 'next/link';
 import { AlertCircle, Radio, CheckCircle2 } from 'lucide-react';
@@ -10,9 +10,9 @@ export default function EmergencyBar() {
   const [session, setSession] = useState<SOSSession | null>(null);
 
   useEffect(() => {
-    setSession(nirbhayaStore.getActiveSession());
-    return nirbhayaStore.subscribe(() => {
-      setSession(nirbhayaStore.getActiveSession());
+    setSession(rakshaStore.getActiveSession());
+    return rakshaStore.subscribe(() => {
+      setSession(rakshaStore.getActiveSession());
     });
   }, []);
 
@@ -38,7 +38,7 @@ export default function EmergencyBar() {
             Active Dispatch
           </Link>
           <button
-            onClick={() => nirbhayaStore.resolveSOS(session.id, 'resolved')}
+            onClick={() => rakshaStore.resolveSOS(session.id, 'resolved')}
             className="bg-rose-950/80 hover:bg-rose-900 text-white border border-rose-400/40 px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all"
           >
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
