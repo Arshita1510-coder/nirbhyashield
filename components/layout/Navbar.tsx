@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { AlertTriangle, Bell, Bus, CheckCircle2, ChevronDown, Home, Navigation, Radio, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { AlertTriangle, Bell, Bus, CheckCircle2, ChevronDown, Home, Navigation, Radio, ShieldAlert, ShieldCheck, User, Key, Settings, LogOut } from 'lucide-react';
+import ProfileSettingsModal from './ProfileSettingsModal';
 
 const navItems = [
   { href: '/', label: 'Overview', icon: Home },
@@ -19,15 +20,22 @@ const notifications = [
   { icon: CheckCircle2, title: 'Incident Resolved', time: '10 minutes ago', tone: 'text-emerald-400' },
 ];
 
-const adminWorkspaceLinks = [
-  { href: '/responder', label: 'Responder Hub', detail: 'Live safety response', icon: ShieldCheck },
-];
-
 export default function Navbar() {
   const pathname = usePathname();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  // Settings Modal State
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [modalTab, setModalTab] = useState<'profile' | 'security' | 'vault' | 'notifications'>('profile');
+
   const closeMenus = () => { setIsNotificationsOpen(false); setIsUserMenuOpen(false); };
+
+  const openSettingsModal = (tab: 'profile' | 'security' | 'vault' | 'notifications') => {
+    setModalTab(tab);
+    setIsSettingsOpen(true);
+    closeMenus();
+  };
 
   const navLinks = (compact = false) => navItems.map((item) => {
     const Icon = item.icon;
@@ -42,56 +50,170 @@ export default function Navbar() {
   });
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md">
-      <div className="w-full px-3 sm:px-5 lg:px-6">
-        <div className="flex min-h-[72px] items-center gap-3">
-          <Link href="/" onClick={closeMenus} className="group flex shrink-0 items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-rose-400 shadow-lg shadow-rose-900/40 transition-transform group-hover:scale-105"><ShieldAlert className="h-5 w-5 text-white" /></div>
-            <div className="leading-tight">
-              <div className="flex items-center gap-1.5 font-bold text-white"><span className="text-base">RakshaShield</span><span className="rounded-full border border-rose-500/30 bg-rose-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-rose-300">v2.0</span></div>
-              <p className="mt-0.5 text-[10px] font-medium tracking-wide text-slate-500">Command Center</p>
-            </div>
-          </Link>
+    <>
+      <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md">
+        <div className="w-full px-3 sm:px-5 lg:px-6">
+          <div className="flex min-h-[72px] items-center gap-3">
+            <Link href="/" onClick={closeMenus} className="group flex shrink-0 items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-rose-600 to-rose-400 shadow-lg shadow-rose-900/40 transition-transform group-hover:scale-105"><ShieldAlert className="h-5 w-5 text-white" /></div>
+              <div className="leading-tight">
+                <div className="flex items-center gap-1.5 font-bold text-white"><span className="text-base">RakshaShield</span><span className="rounded-full border border-rose-500/30 bg-rose-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-rose-300">v2.0</span></div>
+                <p className="mt-0.5 text-[10px] font-medium tracking-wide text-slate-500">Command Center</p>
+              </div>
+            </Link>
 
-          <nav aria-label="Primary navigation" className="hidden 2xl:flex min-w-0 flex-1 items-center justify-center gap-0.5">{navLinks()}</nav>
+            <nav aria-label="Primary navigation" className="hidden 2xl:flex min-w-0 flex-1 items-center justify-center gap-0.5">{navLinks()}</nav>
 
-          <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
-            <div className="relative">
-              <button type="button" aria-label="Notifications" aria-expanded={isNotificationsOpen} onClick={() => { setIsNotificationsOpen(!isNotificationsOpen); setIsUserMenuOpen(false); }} className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white">
-                <Bell className="h-4 w-4" /><span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-rose-400 ring-2 ring-slate-950" />
-              </button>
-              {isNotificationsOpen && <div className="absolute right-0 top-11 z-50 w-72 rounded-xl border border-slate-700/80 bg-slate-900 p-2 shadow-2xl shadow-black/40">
-                <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">Notifications</div>
-                {notifications.map(({ icon: Icon, title, time, tone }) => <button key={title} type="button" onClick={() => setIsNotificationsOpen(false)} className="flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-slate-800">
-                  <Icon className={`h-4 w-4 shrink-0 ${tone}`} /><span className="min-w-0"><span className="block text-xs font-medium text-slate-200">{title}</span><span className="block text-[10px] text-slate-500">{time}</span></span>
-                </button>)}
-              </div>}
-            </div>
+            <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
+              <div className="relative">
+                <button type="button" aria-label="Notifications" aria-expanded={isNotificationsOpen} onClick={() => { setIsNotificationsOpen(!isNotificationsOpen); setIsUserMenuOpen(false); }} className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-800 hover:text-white">
+                  <Bell className="h-4 w-4" /><span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-rose-400 ring-2 ring-slate-950" />
+                </button>
+                {isNotificationsOpen && <div className="absolute right-0 top-11 z-50 w-72 rounded-xl border border-slate-700/80 bg-slate-900 p-2 shadow-2xl shadow-black/40">
+                  <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500">Notifications</div>
+                  {notifications.map(({ icon: Icon, title, time, tone }) => <button key={title} type="button" onClick={() => setIsNotificationsOpen(false)} className="flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-slate-800">
+                    <Icon className={`h-4 w-4 shrink-0 ${tone}`} /><span className="min-w-0"><span className="block text-xs font-medium text-slate-200">{title}</span><span className="block text-[10px] text-slate-500">{time}</span></span>
+                  </button>)}
+                </div>}
+              </div>
 
-            <div className="hidden items-center gap-1.5 rounded-lg px-2 py-1.5 text-[11px] font-medium text-slate-400 sm:flex"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" /><span className="hidden md:inline">Realtime Connected</span><span className="md:hidden">Online</span></div>
+              <div className="hidden items-center gap-1.5 rounded-lg px-2 py-1.5 text-[11px] font-medium text-slate-400 sm:flex"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" /><span className="hidden md:inline">Realtime Connected</span><span className="md:hidden">Online</span></div>
 
-            <div className="relative border-l border-slate-800 pl-1.5 sm:pl-2">
-              <button type="button" aria-expanded={isUserMenuOpen} onClick={() => { setIsUserMenuOpen(!isUserMenuOpen); setIsNotificationsOpen(false); }} className="flex items-center gap-2 rounded-lg px-1.5 py-1.5 text-left transition-colors hover:bg-slate-800">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-rose-500/20 text-[10px] font-bold text-rose-300 ring-1 ring-inset ring-rose-500/30">AU</span>
-                <span className="hidden leading-tight sm:block"><span className="block text-xs font-semibold text-slate-200">Admin User</span><span className="block text-[10px] text-slate-500">Safety Administrator</span></span>
-                <ChevronDown className={`h-3.5 w-3.5 text-slate-500 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {isUserMenuOpen && <div className="absolute right-0 top-11 z-50 w-64 overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900 p-1.5 shadow-2xl shadow-black/40">
-                <div className="flex items-center gap-2 border-b border-slate-800 px-2.5 py-2.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-rose-500/20 text-[10px] font-bold text-rose-300">AU</span>
-                  <span><span className="block text-xs font-semibold text-slate-100">Admin User</span><span className="block text-[10px] text-slate-500">Safety Administrator</span></span>
-                </div>
-                <div className="px-2.5 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Admin workspace</div>
-                {adminWorkspaceLinks.map(({ href, label, detail, icon: Icon }) => <Link key={label} href={href} onClick={closeMenus} className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-slate-300 transition-colors hover:bg-slate-800 hover:text-white">
-                  <Icon className="h-3.5 w-3.5 shrink-0 text-rose-400" /><span><span className="block text-xs font-medium">{label}</span><span className="block text-[10px] text-slate-500">{detail}</span></span>
-                </Link>)}
-              </div>}
+              {/* USER PROFILE & SETTINGS DROPDOWN (TOP RIGHT) */}
+              <div className="relative border-l border-slate-800 pl-1.5 sm:pl-2">
+                <button
+                  type="button"
+                  aria-expanded={isUserMenuOpen}
+                  onClick={() => { setIsUserMenuOpen(!isUserMenuOpen); setIsNotificationsOpen(false); }}
+                  className="flex items-center gap-2 rounded-xl px-2 py-1.5 text-left transition-all hover:bg-slate-800/80 border border-slate-800/60 hover:border-slate-700"
+                >
+                  <div className="relative">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-rose-600 to-rose-400 text-xs font-black text-white shadow-md shadow-rose-950/50 ring-1 ring-inset ring-rose-400/40">
+                      AS
+                    </span>
+                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-400 ring-2 ring-slate-950" />
+                  </div>
+
+                  <span className="hidden leading-tight sm:block">
+                    <span className="block text-xs font-bold text-slate-100">Arshita Sharma</span>
+                    <span className="block text-[10px] font-semibold text-rose-400">Primary Guardian</span>
+                  </span>
+                  <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 top-12 z-50 w-72 overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900 p-2 shadow-2xl shadow-black/60 animate-in fade-in duration-150">
+                    
+                    {/* User Profile Card Header */}
+                    <div className="flex items-center gap-3 border-b border-slate-800 p-2.5 bg-slate-950/60 rounded-xl mb-1.5">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-rose-600 to-rose-400 text-xs font-extrabold text-white shadow-md">
+                        AS
+                      </div>
+                      <div className="min-w-0">
+                        <span className="block text-xs font-bold text-white truncate">Arshita Sharma</span>
+                        <span className="block text-[10px] text-slate-400 truncate">arshita.sharma@rakshashield.org</span>
+                        <span className="inline-block mt-0.5 text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2 py-0.5 rounded-full font-semibold">
+                          ● Guardian Verified
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Section 1: User Settings & Safety Controls */}
+                    <div className="px-2 pb-1 pt-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                      User Profile & Safety Preferences
+                    </div>
+
+                    <button
+                      onClick={() => openSettingsModal('profile')}
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white text-left"
+                    >
+                      <User className="h-4 w-4 shrink-0 text-rose-400" />
+                      <div>
+                        <span className="block text-xs font-semibold">My Profile & Emergency Info</span>
+                        <span className="block text-[10px] text-slate-500">Medical notes, phone & home address</span>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => openSettingsModal('security')}
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white text-left"
+                    >
+                      <Key className="h-4 w-4 shrink-0 text-amber-400" />
+                      <div>
+                        <span className="block text-xs font-semibold">Duress PIN & Voice Keyword</span>
+                        <span className="block text-[10px] text-slate-500">Silent false PIN & voice triggers</span>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => openSettingsModal('vault')}
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white text-left"
+                    >
+                      <Radio className="h-4 w-4 shrink-0 text-emerald-400" />
+                      <div>
+                        <span className="block text-xs font-semibold">Audio Vault & Storage</span>
+                        <span className="block text-[10px] text-slate-500">Supabase RLS token validity</span>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => openSettingsModal('notifications')}
+                      className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white text-left"
+                    >
+                      <Settings className="h-4 w-4 shrink-0 text-cyan-400" />
+                      <div>
+                        <span className="block text-xs font-semibold">Alert Siren & Push Preferences</span>
+                        <span className="block text-[10px] text-slate-500">Alarm volume & vibration toggles</span>
+                      </div>
+                    </button>
+
+                    {/* Section 2: Admin & Responder Hub */}
+                    <div className="mt-1.5 pt-1.5 border-t border-slate-800 px-2 pb-1 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                      Emergency Workspace
+                    </div>
+
+                    <Link
+                      href="/responder"
+                      onClick={closeMenus}
+                      className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-slate-300 transition-all hover:bg-slate-800 hover:text-white"
+                    >
+                      <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400" />
+                      <div>
+                        <span className="block text-xs font-semibold">Responder Dispatch Hub</span>
+                        <span className="block text-[10px] text-slate-500">Live monitoring & emergency log</span>
+                      </div>
+                    </Link>
+
+                    {/* Section 3: Sign Out Simulation */}
+                    <div className="mt-1.5 pt-1.5 border-t border-slate-800">
+                      <button
+                        onClick={() => {
+                          alert('Session Locked. Re-authenticate via Supabase Auth.');
+                          closeMenus();
+                        }}
+                        className="flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-rose-400 transition-all hover:bg-rose-950/60 hover:text-rose-300 text-left"
+                      >
+                        <LogOut className="h-4 w-4 shrink-0" />
+                        <span className="text-xs font-bold">Lock Session / Sign Out</span>
+                      </button>
+                    </div>
+
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <nav aria-label="Primary navigation" className="2xl:hidden flex gap-0.5 overflow-x-auto border-t border-slate-800/70 px-2 py-1.5 [scrollbar-width:none] sm:px-4">{navLinks(true)}</nav>
-    </header>
+        <nav aria-label="Primary navigation" className="2xl:hidden flex gap-0.5 overflow-x-auto border-t border-slate-800/70 px-2 py-1.5 [scrollbar-width:none] sm:px-4">{navLinks(true)}</nav>
+      </header>
+
+      {/* Render Profile & Settings Modal */}
+      <ProfileSettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        initialTab={modalTab}
+      />
+    </>
   );
 }
