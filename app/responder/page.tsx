@@ -1,29 +1,34 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, Radio, MapPin, Battery, Clock, Mic, PhoneCall, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { ShieldCheck, Radio, MapPin, Battery, Clock, Mic, PhoneCall, CheckCircle2, ShieldAlert, AlertTriangle, ExternalLink, FileText, Activity } from 'lucide-react';
 import { nirbhayaStore } from '@/lib/supabase/mock-store';
-import { SOSSession, SOSLocation } from '@/lib/supabase/types';
+import { supabaseService } from '@/lib/supabase/service';
+import { SOSSession, SOSLocation, SafetyReport } from '@/lib/supabase/types';
+import Link from 'next/link';
 
 export default function ResponderPage() {
   const [activeSession, setActiveSession] = useState<SOSSession | null>(null);
   const [locations, setLocations] = useState<SOSLocation[]>([]);
   const [contacts, setContacts] = useState(nirbhayaStore.getContacts());
+  const [safetyReports, setSafetyReports] = useState<SafetyReport[]>([]);
 
-  useEffect(() => {
+  const refreshData = async () => {
     const current = nirbhayaStore.getActiveSession();
     setActiveSession(current);
     if (current) {
       setLocations(nirbhayaStore.getLocations(current.id));
     }
+    setContacts(nirbhayaStore.getContacts());
+    const reports = await supabaseService.getSafetyReports();
+    setSafetyReports(reports);
+  };
+
+  useEffect(() => {
+    refreshData();
 
     return nirbhayaStore.subscribe(() => {
-      const updated = nirbhayaStore.getActiveSession();
-      setActiveSession(updated);
-      if (updated) {
-        setLocations(nirbhayaStore.getLocations(updated.id));
-      }
-      setContacts(nirbhayaStore.getContacts());
+      refreshData();
     });
   }, []);
 
@@ -36,16 +41,16 @@ export default function ResponderPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> RESPONDER COMMAND HUB
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> ADMIN & POLICE RESPONDER COMMAND HUB
           </div>
-          <h1 className="text-3xl font-extrabold text-white mt-1">Trusted Contact & Responder Portal</h1>
+          <h1 className="text-3xl font-extrabold text-white mt-1">Live Emergency Dispatch & Safety Admin Portal</h1>
           <p className="text-xs text-slate-400">
-            Authorized portal for emergency contacts and responders to monitor live broadcasts & audio clips.
+            Realtime monitoring for active SOS dispatches, crowdsourced hazard reports, and responder roster.
           </p>
         </div>
 
         <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs">
-          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span className="text-slate-400">Supabase Auth Claim:</span>
           <code className="text-emerald-400 font-mono font-bold">is_trusted_contact = true</code>
         </div>
@@ -71,12 +76,22 @@ export default function ResponderPage() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => nirbhayaStore.resolveSOS(activeSession.id, 'resolved')}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5"
-                >
-                  <CheckCircle2 className="w-4 h-4" /> Mark Emergency Resolved
-                </button>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/track/${activeSession.tracking_token}`}
+                    target="_blank"
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 border border-slate-700"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-cyan-400" /> Track Link
+                  </Link>
+
+                  <button
+                    onClick={() => nirbhayaStore.resolveSOS(activeSession.id, 'resolved')}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-950/50"
+                  >
+                    <CheckCircle2 className="w-4 h-4" /> Resolve SOS
+                  </button>
+                </div>
               </div>
 
               {/* Status Metrics */}
@@ -136,29 +151,105 @@ export default function ResponderPage() {
               </p>
             </div>
           )}
+
+          {/* Section: Live Crowdsourced Safety & Hazard Reports */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white">Public Hazard & Safety Reports Log</h2>
+                  <p className="text-xs text-slate-400">Crowdsourced reports filed by citizens & commuters.</p>
+                </div>
+              </div>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 font-medium">
+                {safetyReports.length} Reports Logged
+              </span>
+            </div>
+
+            <div className="space-y-3">
+              {safetyReports.map((report) => (
+                <div key={report.id} className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-white uppercase">{report.category.replace('_', ' ')}</span>
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${
+                        report.severity === 'high'
+                          ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                          : report.severity === 'medium'
+                          ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                          : 'bg-emerald-500/20 text-emerald-400'
+                      }`}>
+                        {report.severity} severity
+                      </span>
+                    </div>
+                    <span className="text-slate-500 text-[10px]">
+                      {new Date(report.created_at).toLocaleTimeString()}
+                    </span>
+                  </div>
+
+                  <p className="text-slate-300 leading-relaxed">{report.description}</p>
+
+                  <div className="pt-2 border-t border-slate-900 flex items-center justify-between text-[11px] text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-cyan-400" /> GPS: {report.lat.toFixed(4)}, {report.lng.toFixed(4)}
+                    </span>
+                    <span>Status: Logged to PostGIS Safety Layer</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Right Column: Responder Roster & Quick Dispatch */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-xl">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <PhoneCall className="w-5 h-5 text-rose-400" /> Emergency Contact Roster
-          </h2>
+        {/* Right Column: Responder Roster & System Stats */}
+        <div className="space-y-6">
+          {/* Roster */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5 shadow-xl">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <PhoneCall className="w-5 h-5 text-rose-400" /> Emergency Contact Roster
+            </h2>
 
-          <div className="space-y-3">
-            {contacts.map((c) => (
-              <div key={c.id} className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between text-xs">
-                <div>
-                  <div className="font-bold text-white">{c.name}</div>
-                  <div className="text-slate-400">{c.phone}</div>
+            <div className="space-y-3">
+              {contacts.map((c) => (
+                <div key={c.id} className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between text-xs">
+                  <div>
+                    <div className="font-bold text-white">{c.name}</div>
+                    <div className="text-slate-400">{c.phone}</div>
+                  </div>
+                  <a
+                    href={`tel:${c.phone}`}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg font-semibold"
+                  >
+                    Call
+                  </a>
                 </div>
-                <a
-                  href={`tel:${c.phone}`}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg font-semibold"
-                >
-                  Call
-                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Admin System Diagnostics */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+            <div className="flex items-center gap-2 text-cyan-400 font-bold text-sm">
+              <Activity className="w-4 h-4" /> Admin System Status
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between">
+                <span className="text-slate-400">Postgres RLS:</span>
+                <span className="text-emerald-400 font-bold">Enforced</span>
               </div>
-            ))}
+              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between">
+                <span className="text-slate-400">Realtime Channel:</span>
+                <span className="text-emerald-400 font-bold">sos_locations</span>
+              </div>
+              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between">
+                <span className="text-slate-400">Storage Vault:</span>
+                <span className="text-emerald-400 font-bold">sos-media</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -167,3 +258,4 @@ export default function ResponderPage() {
     </div>
   );
 }
+
