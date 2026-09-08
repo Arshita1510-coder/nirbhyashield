@@ -16,11 +16,12 @@ export class SupabaseService {
   async addContact(contact: Omit<TrustedContact, 'id' | 'user_id' | 'created_at'>): Promise<TrustedContact> {
     if (isSupabaseConfigured && supabase) {
       const { data: userData } = await supabase.auth.getUser();
-      const userId = userData?.user?.id || '00000000-0000-0000-0000-000000000000';
-      const { data, error } = await supabase.from('trusted_contacts').insert([
-        { ...contact, user_id: userId }
-      ]).select().single();
+      const insertObj: any = { name: contact.name, phone: contact.phone, share_level: contact.share_level };
+      if (userData?.user?.id) insertObj.user_id = userData.user.id;
+
+      const { data, error } = await supabase.from('trusted_contacts').insert([insertObj]).select().single();
       if (!error && data) return data as TrustedContact;
+      if (error) console.error('Supabase addContact error:', error);
     }
     return nirbhayaStore.addContact(contact);
   }
@@ -36,16 +37,12 @@ export class SupabaseService {
   async createSOSSession(triggerType: SOSSession['trigger_type'], vehicleId?: string): Promise<SOSSession> {
     if (isSupabaseConfigured && supabase) {
       const { data: userData } = await supabase.auth.getUser();
-      const userId = userData?.user?.id || '00000000-0000-0000-0000-000000000000';
-      const { data, error } = await supabase.from('sos_sessions').insert([
-        {
-          user_id: userId,
-          status: 'active',
-          trigger_type: triggerType,
-          vehicle_id: vehicleId,
-        }
-      ]).select().single();
+      const insertObj: any = { status: 'active', trigger_type: triggerType, vehicle_id: vehicleId };
+      if (userData?.user?.id) insertObj.user_id = userData.user.id;
+
+      const { data, error } = await supabase.from('sos_sessions').insert([insertObj]).select().single();
       if (!error && data) return data as SOSSession;
+      if (error) console.error('Supabase createSOSSession error:', error);
     }
     return nirbhayaStore.triggerSOS(triggerType, 28.6139, 77.2090, vehicleId);
   }

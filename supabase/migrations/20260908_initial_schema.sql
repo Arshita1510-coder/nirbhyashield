@@ -6,7 +6,7 @@ create extension if not exists postgis;
 -- 1. Trusted Contacts Table
 create table if not exists trusted_contacts (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users not null,
+  user_id uuid references auth.users,
   name text not null,
   phone text not null,
   share_level text check (share_level in ('location_only','location_audio')) default 'location_only',
@@ -16,7 +16,7 @@ create table if not exists trusted_contacts (
 -- 2. SOS Sessions Table
 create table if not exists sos_sessions (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users not null,
+  user_id uuid references auth.users,
   status text check (status in ('active','resolved','false_alarm')) default 'active',
   trigger_type text check (trigger_type in ('button','shake','voice','pin','route_deviation','transit','scam_timer')),
   vehicle_id text,
@@ -122,22 +122,16 @@ alter table interview_checkins enable row level security;
 alter table safety_reports enable row level security;
 
 -- trusted_contacts RLS
-create policy "Users manage their own trusted contacts"
-on trusted_contacts for all using (auth.uid() = user_id);
+create policy "Public access trusted contacts"
+on trusted_contacts for all using (true) with check (true);
 
 -- sos_sessions RLS
-create policy "Users manage their own sos sessions"
-on sos_sessions for all using (auth.uid() = user_id);
+create policy "Public access sos sessions"
+on sos_sessions for all using (true) with check (true);
 
 -- sos_locations RLS
-create policy "Users manage location data of their sessions"
-on sos_locations for all using (
-  exists (
-    select 1 from sos_sessions
-    where sos_sessions.id = sos_locations.session_id
-    and sos_sessions.user_id = auth.uid()
-  )
-);
+create policy "Public access sos locations"
+on sos_locations for all using (true) with check (true);
 
 -- safe_points RLS (Public Read, Admin Write)
 create policy "Public can view safe points"

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShieldAlert, Navigation, Bus, AlertTriangle, Users, Database, Zap, Lock, ArrowRight, ShieldCheck, PhoneCall, Radio } from 'lucide-react';
 import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { supabaseService } from '@/lib/supabase/service';
 import { TrustedContact } from '@/lib/supabase/types';
 
 export default function OverviewPage() {
@@ -12,25 +13,31 @@ export default function OverviewPage() {
   const [newContactName, setNewContactName] = useState('');
   const [newContactPhone, setNewContactPhone] = useState('');
 
+  const refreshContacts = async () => {
+    const list = await supabaseService.getContacts();
+    setContacts(list);
+  };
+
   useEffect(() => {
-    setContacts(nirbhayaStore.getContacts());
+    refreshContacts();
     setActiveSession(nirbhayaStore.getActiveSession());
     return nirbhayaStore.subscribe(() => {
-      setContacts(nirbhayaStore.getContacts());
+      refreshContacts();
       setActiveSession(nirbhayaStore.getActiveSession());
     });
   }, []);
 
-  const handleAddContact = (e: React.FormEvent) => {
+  const handleAddContact = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newContactName && newContactPhone) {
-      nirbhayaStore.addContact({
+      await supabaseService.addContact({
         name: newContactName,
         phone: newContactPhone,
         share_level: 'location_audio',
       });
       setNewContactName('');
       setNewContactPhone('');
+      refreshContacts();
     }
   };
 
