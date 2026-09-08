@@ -266,7 +266,7 @@ export default function TransitSafetyPage() {
                   className="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2"
                 >
                   <QrCode className="w-4 h-4" />
-                  {isCheckedIn ? 'Update Vehicle Info' : `Simulate ${transitMode.toUpperCase()} Safety Check-in`}
+                  {isCheckedIn ? 'Update Vehicle Info' : 'Simulate Safety Check-in'}
                 </button>
               </div>
             </form>
