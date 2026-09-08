@@ -4,7 +4,10 @@ import { nirbhayaStore } from '@/lib/supabase/mock-store';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { origin, destination } = body;
+    const { origin, destination, originLat: reqLat, originLng: reqLng } = body;
+
+    const originLat = typeof reqLat === 'number' ? reqLat : 28.6139;
+    const originLng = typeof reqLng === 'number' ? reqLng : 77.2090;
 
     const safePoints = nirbhayaStore.getSafePoints();
     const safetyReports = nirbhayaStore.getSafetyReports();
@@ -14,15 +17,15 @@ export async function POST(req: Request) {
     const safestScore = Math.floor(92 + Math.random() * 6); // ~95/100
 
     const fastestPathWaypoints = [
-      [28.6139, 77.2090],
-      [28.6160, 77.2110], // passes near dark report area
-      [28.6220, 77.2150],
+      [originLat, originLng],
+      [originLat + 0.0021, originLng + 0.0020],
+      [originLat + 0.0081, originLng + 0.0060],
     ];
 
     const safestPathWaypoints = [
-      [28.6139, 77.2090],
-      [28.6180, 77.2150], // passes Apollo Pharmacy Pink Desk
-      [28.6220, 77.2050], // passes Metro Pink Booth
+      [originLat, originLng],
+      [originLat + 0.0041, originLng + 0.0060],
+      [originLat + 0.0081, originLng - 0.0040],
     ];
 
     return NextResponse.json({

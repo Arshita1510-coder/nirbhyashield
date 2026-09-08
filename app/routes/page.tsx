@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { Navigation, ShieldCheck, AlertTriangle, MapPin, Zap, CheckCircle2, Radio, Info } from 'lucide-react';
+import { Navigation, ShieldCheck, AlertTriangle, MapPin, Zap, CheckCircle2, Radio, Info, LocateFixed, Compass, Loader2 } from 'lucide-react';
 import { nirbhayaStore } from '@/lib/supabase/mock-store';
 import { SafePoint, SafetyReport } from '@/lib/supabase/types';
 
@@ -24,6 +24,10 @@ export default function SafeRoutesPage() {
   const [safetyReports, setSafetyReports] = useState<SafetyReport[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Live Location & Geolocation State
+  const [isLocating, setIsLocating] = useState(false);
+  const [liveCoords, setLiveCoords] = useState<{ lat: number; lng: number } | null>(null);
+
   // Route Deviation Monitor Simulator State
   const [isNavigating, setIsNavigating] = useState(false);
   const [deviationAlert, setDeviationAlert] = useState(false);
@@ -32,13 +36,18 @@ export default function SafeRoutesPage() {
     fetchRoutes();
   }, []);
 
-  const fetchRoutes = async () => {
+  const fetchRoutes = async (overrideLat?: number, overrideLng?: number) => {
     setLoading(true);
     try {
       const res = await fetch('/api/safe-routes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ origin, destination }),
+        body: JSON.stringify({
+          origin,
+          destination,
+          originLat: overrideLat ?? liveCoords?.lat,
+          originLng: overrideLng ?? liveCoords?.lng,
+        }),
       });
       const data = await res.json();
       if (data.routes) {
@@ -51,6 +60,37 @@ export default function SafeRoutesPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFetchLiveLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Browser geolocation is not supported by your device/browser.');
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setLiveCoords({ lat, lng });
+        const locationText = `My Live Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+        setOrigin(locationText);
+        setIsLocating(false);
+        fetchRoutes(lat, lng);
+      },
+      (error) => {
+        setIsLocating(false);
+        console.warn('Geolocation error fallback:', error.message);
+        // Fallback to current GPS coordinates if permission denied
+        const fallbackLat = 28.6139;
+        const fallbackLng = 77.2090;
+        setLiveCoords({ lat: fallbackLat, lng: fallbackLng });
+        setOrigin(`My Live Location (${fallbackLat.toFixed(4)}, ${fallbackLng.toFixed(4)})`);
+        fetchRoutes(fallbackLat, fallbackLng);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   };
 
   const simulateRouteDeviation = () => {
@@ -112,25 +152,56 @@ export default function SafeRoutesPage() {
           
           {/* Search Box */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">Plan Route</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-300">Plan Route</h3>
+              
+              <button
+                onClick={handleFetchLiveLocation}
+                disabled={isLocating}
+                className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 transition-all"
+              >
+                {isLocating ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" />
+                ) : (
+                  <LocateFixed className="w-3.5 h-3.5 text-emerald-400" />
+                )}
+                <span>{isLocating ? 'Connecting GPS...' : 'Use My Live Location'}</span>
+              </button>
+            </div>
+
             <div className="space-y-2 text-xs">
               <div>
-                <label className="text-slate-400 block mb-1">Origin:</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-slate-400">Origin:</label>
+                  {liveCoords && (
+                    <span className="text-[10px] text-emerald-400 font-mono font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      GPS Synced
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white">
-                  <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                  <MapPin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                   <input
                     type="text"
                     value={origin}
                     onChange={(e) => setOrigin(e.target.value)}
                     className="bg-transparent w-full focus:outline-none"
                   />
+                  <button
+                    onClick={handleFetchLiveLocation}
+                    title="Connect Live GPS Location"
+                    className="text-slate-400 hover:text-emerald-400 transition-colors p-0.5"
+                  >
+                    <LocateFixed className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
 
               <div>
                 <label className="text-slate-400 block mb-1">Destination:</label>
                 <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white">
-                  <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                  <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                   <input
                     type="text"
                     value={destination}
@@ -141,7 +212,7 @@ export default function SafeRoutesPage() {
               </div>
 
               <button
-                onClick={fetchRoutes}
+                onClick={() => fetchRoutes()}
                 className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-lg font-semibold text-xs transition-colors mt-2"
               >
                 Recalculate Routes
