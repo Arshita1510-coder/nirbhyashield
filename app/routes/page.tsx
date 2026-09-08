@@ -113,10 +113,7 @@ export default function SafeRoutesPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold border border-emerald-500/30">
-            <Navigation className="w-3.5 h-3.5 text-emerald-400" /> TRACK CARD #22
-          </div>
-          <h1 className="text-3xl font-extrabold text-white mt-1">Safe Route Recommendation System</h1>
+          <h1 className="text-3xl font-extrabold text-white">Safe Route Recommendation System</h1>
           <p className="text-xs text-slate-400">
             PostGIS spatial queries evaluate street lighting index, police pink-booths, crowd density, and hazard reports.
           </p>

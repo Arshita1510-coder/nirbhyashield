@@ -86,10 +86,7 @@ export default function TransitSafetyPage() {
       
       {/* Header */}
       <div>
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 text-xs font-bold border border-cyan-500/30">
-          <Bus className="w-3.5 h-3.5 text-cyan-400" /> TRACK CARD #23
-        </div>
-        <h1 className="text-3xl font-extrabold text-white mt-1">Public Transport Safety System</h1>
+        <h1 className="text-3xl font-extrabold text-white">Public Transport Safety System</h1>
         <p className="text-xs text-slate-400">
           Connected reporting & response workflows for buses, trains, metros, auto-rickshaws, cabs, and public transport.
         </p>

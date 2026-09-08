@@ -79,10 +79,7 @@ export default function ScamDetectorPage() {
       
       {/* Header */}
       <div>
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold border border-amber-500/30">
-          <AlertTriangle className="w-3.5 h-3.5 text-amber-400" /> PHASE 4 SAFETY MODULE
-        </div>
-        <h1 className="text-3xl font-extrabold text-white mt-1">Job & Interview Scam Detector</h1>
+        <h1 className="text-3xl font-extrabold text-white">Job & Interview Scam Detector</h1>
         <p className="text-xs text-slate-400">
           Detect suspicious job offers, isolated interview addresses, and setup timed safety check-in callbacks.
         </p>

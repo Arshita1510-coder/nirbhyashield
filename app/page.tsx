@@ -101,7 +101,6 @@ export default function OverviewPage() {
               <ShieldAlert className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs text-rose-400 font-bold tracking-wider uppercase">Track Card #21</span>
               <h3 className="text-lg font-bold text-white group-hover:text-rose-400 transition-colors">Core SOS Alert Engine</h3>
               <p className="text-xs text-slate-400 mt-1">
                 Multi-trigger activation (Hold, PIN, Shake, Voice), Supabase Realtime breadcrumbs, & encrypted audio vault.
@@ -120,7 +119,6 @@ export default function OverviewPage() {
               <Navigation className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs text-emerald-400 font-bold tracking-wider uppercase">Track Card #22</span>
               <h3 className="text-lg font-bold text-white group-hover:text-emerald-400 transition-colors">Safe Route Recommender</h3>
               <p className="text-xs text-slate-400 mt-1">
                 PostGIS spatial safe-points query, lighting/crowd safety index, and route deviation alert logic.
@@ -139,7 +137,6 @@ export default function OverviewPage() {
               <Bus className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs text-cyan-400 font-bold tracking-wider uppercase">Track Card #23</span>
               <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">Transit Safety System</h3>
               <p className="text-xs text-slate-400 mt-1">
                 Bus/Train QR check-in, station safety reporting, and connected emergency response workflows.
@@ -158,7 +155,6 @@ export default function OverviewPage() {
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div>
-              <span className="text-xs text-amber-400 font-bold tracking-wider uppercase">Scam Protection</span>
               <h3 className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">Job Scam & Check-in</h3>
               <p className="text-xs text-slate-400 mt-1">
                 Fake offer/interview text risk analyzer + automated interview safety check-in timer with auto-SOS escalation.
