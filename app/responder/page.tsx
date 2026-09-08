@@ -48,27 +48,47 @@ export default function ResponderPage() {
   ];
 
   return (
-    <div className="space-y-5 xl:relative xl:left-1/2 xl:w-[min(calc(100vw-3rem),1520px)] xl:-translate-x-1/2">
-      <section className="grid gap-5 border-b border-slate-800/90 pb-5 xl:grid-cols-[1fr_36rem]">
-        <div className="pt-1">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-900/70 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-slate-600 hover:bg-slate-800 hover:text-white"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back to Home
-          </Link>
-          <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-rose-500/25 bg-rose-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-rose-300">
-            <Radio className="h-3.5 w-3.5" /> Admin & Police Responder Command Hub
+    <div className="space-y-6">
+      
+      {/* Top Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-xs font-bold border border-rose-500/30">
+            <Radio className="w-3.5 h-3.5 text-rose-400 animate-pulse" /> ADMIN & POLICE RESPONDER COMMAND HUB
           </div>
-          <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Live Emergency Dispatch & Safety Admin Portal</h1>
-          <p className="mt-2 max-w-3xl text-sm text-slate-400">Realtime monitoring for active SOS dispatches, crowdsourced hazard reports, and responder roster.</p>
+          <h1 className="text-3xl font-extrabold text-white mt-1">Live Emergency Dispatch & Safety Admin Portal</h1>
+          <p className="text-xs text-slate-400">
+            Realtime monitoring for active SOS dispatches, crowdsourced hazard reports, and responder roster.
+          </p>
         </div>
-        <div className="flex items-center gap-4 rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/25 to-slate-900 p-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-emerald-400/20 bg-emerald-500/10 text-emerald-400"><ShieldCheck className="h-6 w-6" /></div>
-          <div><h2 className="text-sm font-bold text-emerald-400">All Systems Normal & Safe</h2><p className="mt-1 text-xs leading-5 text-slate-400">{activeCount ? 'An SOS session is currently live and visible to the responder team.' : 'No active emergency SOS dispatches at this moment. Standing by on Supabase Realtime channel.'}</p></div>
+
+        <Link
+          href="/"
+          className="self-start md:self-auto inline-flex items-center gap-1.5 rounded-xl border border-slate-800 bg-slate-900 hover:bg-slate-800 px-3.5 py-2 text-xs font-bold text-slate-300 transition-all hover:text-white shadow-sm"
+        >
+          <ArrowLeft className="w-4 h-4 text-slate-400" />
+          Back to Overview
+        </Link>
+      </div>
+
+      {/* System Status Alert Banner */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 p-4 shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-500/15 text-emerald-400 shadow-md">
+            <ShieldCheck className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-emerald-400">All Systems Normal & Safe</h2>
+            <p className="text-xs text-slate-400">
+              {activeCount ? '⚠️ SOS session currently live! Realtime tracking active.' : 'No active emergency SOS dispatches at this moment. Standing by on Supabase Realtime channel.'}
+            </p>
+          </div>
         </div>
-      </section>
+
+        <span className="text-[11px] font-semibold text-emerald-300 bg-emerald-950 border border-emerald-800/60 px-3 py-1 rounded-full shrink-0">
+          ● RLS Security Active
+        </span>
+      </div>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {statusCards.map(({ label, value, detail, icon: Icon, style }) => (
