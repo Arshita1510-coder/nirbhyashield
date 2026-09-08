@@ -7,11 +7,11 @@ import { AlertTriangle, Bell, Bus, CheckCircle2, ChevronDown, Home, Navigation, 
 import ProfileSettingsModal from './ProfileSettingsModal';
 
 const navItems = [
-  { href: '/', label: 'Overview', icon: Home, badge: 'HUB' },
-  { href: '/sos', label: 'SOS Alert Engine', icon: ShieldAlert, badge: 'LIVE' },
-  { href: '/routes', label: 'Safe Routes', icon: Navigation, badge: 'GPS' },
-  { href: '/transit', label: 'Transit Safety', icon: Bus, badge: 'AUTO' },
-  { href: '/scam-detector', label: 'Scam & Interview', icon: AlertTriangle, badge: 'AI' },
+  { href: '/', label: 'Overview', icon: Home },
+  { href: '/sos', label: 'SOS Alert Engine', icon: ShieldAlert },
+  { href: '/routes', label: 'Safe Routes', icon: Navigation },
+  { href: '/transit', label: 'Transit Safety', icon: Bus },
+  { href: '/scam-detector', label: 'Scam & Interview', icon: AlertTriangle },
 ];
 
 const notifications = [
@@ -78,13 +78,6 @@ export default function Navbar() {
           <Icon className={compact ? 'h-3.5 w-3.5 shrink-0' : 'h-4 w-4 shrink-0'} />
         </div>
         <span>{item.label}</span>
-        {item.badge && !compact && (
-          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider ${
-            isActive ? 'bg-rose-600 text-white shadow-sm shadow-rose-900/50' : 'bg-slate-800 text-slate-400 border border-slate-700'
-          }`}>
-            {item.badge}
-          </span>
-        )}
       </Link>
     );
   });
