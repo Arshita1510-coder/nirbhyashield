@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Navigation, ShieldCheck, AlertTriangle, MapPin, Zap, CheckCircle2, Radio, Info, LocateFixed, Compass, Loader2 } from 'lucide-react';
 import { rakshaStore } from '@/lib/supabase/mock-store';
-import { SafePoint, SafetyReport } from '@/lib/supabase/types';
+import { SafePoint, SafetyReport, SafetyHotspot } from '@/lib/supabase/types';
 
 const SafeRouteMap = dynamic(() => import('@/components/maps/SafeRouteMap'), {
   ssr: false,
@@ -22,6 +22,7 @@ export default function SafeRoutesPage() {
   const [selectedRouteId, setSelectedRouteId] = useState('safest');
   const [safePoints, setSafePoints] = useState<SafePoint[]>([]);
   const [safetyReports, setSafetyReports] = useState<SafetyReport[]>([]);
+  const [hotspots, setHotspots] = useState<SafetyHotspot[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Live Location & Geolocation State
@@ -52,11 +53,13 @@ export default function SafeRoutesPage() {
       const data = await res.json();
       if (data.routes) {
         setRoutes(data.routes);
-        setSafePoints(data.safe_points);
-        setSafetyReports(data.safety_reports);
+        setSafePoints(data.safe_points || []);
+        setSafetyReports(data.safety_reports || []);
+        setHotspots(data.hotspots || rakshaStore.getHotspots());
       }
     } catch (e) {
       console.error(e);
+      setHotspots(rakshaStore.getHotspots());
     } finally {
       setLoading(false);
     }
@@ -269,26 +272,93 @@ export default function SafeRoutesPage() {
 
         </div>
 
-        {/* Right Column: Leaflet Map */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center justify-between text-xs text-slate-300">
-            <span className="font-bold text-emerald-400 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4" /> PostGIS Spatial Safe Points & Lighting Heatmap
-            </span>
-            <div className="flex items-center gap-3 text-[11px] text-slate-400">
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Recommended Safe Route</span>
-              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Fastest Route</span>
+        {/* Right Column: Leaflet Map & Hotspot Breakdown */}
+        <div className="lg:col-span-2 space-y-4">
+          
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300">
+              <span className="font-bold text-emerald-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4" /> PostGIS Spatial Safe Points & Lighting / Crowd Heatmap
+              </span>
+              <div className="flex flex-wrap items-center gap-2.5 text-[11px] text-slate-300 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Safe Route</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Direct Route</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span> 🚨 Sunsaan Risky Zone</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> 🛡️ Safe High-Crowd Zone</span>
+              </div>
+            </div>
+
+            <div className="h-[460px] rounded-xl overflow-hidden border border-slate-800 relative">
+              <SafeRouteMap
+                routes={routes}
+                selectedRouteId={selectedRouteId}
+                safePoints={safePoints}
+                safetyReports={safetyReports}
+                hotspots={hotspots}
+              />
             </div>
           </div>
 
-          <div className="h-[460px] rounded-xl overflow-hidden border border-slate-800">
-            <SafeRouteMap
-              routes={routes}
-              selectedRouteId={selectedRouteId}
-              safePoints={safePoints}
-              safetyReports={safetyReports}
-            />
+          {/* Spatial Safety Hotspot Evaluation Card */}
+          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-emerald-400" /> PostGIS Street Lighting & Crowd Density Hotspot Matrix
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Real-time spatial radius analysis detects unlit sunsaan stretches vs high-footfall safe corridors.
+                </p>
+              </div>
+              <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-950 border border-emerald-800 px-2.5 py-1 rounded-full">
+                Active Map Hotspots: {hotspots.length}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {hotspots.map((hs) => {
+                const isRisky = hs.type === 'risky_sunsaan';
+                return (
+                  <div
+                    key={hs.id}
+                    className={`p-3.5 rounded-xl border text-xs space-y-2 transition-all ${
+                      isRisky
+                        ? 'bg-rose-950/20 border-rose-500/40 hover:border-rose-500/80'
+                        : 'bg-emerald-950/20 border-emerald-500/40 hover:border-emerald-500/80'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={`font-extrabold text-xs flex items-center gap-1.5 ${isRisky ? 'text-rose-400' : 'text-emerald-400'}`}>
+                        {isRisky ? '🚨 RISKY SUNSAAN ZONE' : '🛡️ SAFE CROWDED ZONE'}
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+                        {hs.radius_meters}m Radius
+                      </span>
+                    </div>
+
+                    <div className="font-bold text-white text-sm">{hs.name}</div>
+                    <p className="text-slate-300 text-[11px] leading-relaxed">{hs.description}</p>
+
+                    <div className="pt-2 border-t border-slate-800/80 flex flex-wrap gap-2 text-[11px]">
+                      <span className={`px-2 py-0.5 rounded font-medium ${isRisky ? 'bg-rose-950 text-rose-300 border border-rose-800/50' : 'bg-emerald-950 text-emerald-300 border border-emerald-800/50'}`}>
+                        👥 Crowd: {hs.crowd_level}
+                      </span>
+                      <span className="px-2 py-0.5 rounded font-medium bg-slate-950 text-slate-300 border border-slate-800">
+                        💡 Lighting: {hs.lighting_level}
+                      </span>
+                    </div>
+
+                    {hs.risk_reason && (
+                      <div className="text-[10px] text-rose-400 bg-rose-950/60 p-2 rounded-lg border border-rose-800/40 italic">
+                        ⚠️ Danger Factor: {hs.risk_reason}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
+
         </div>
 
       </div>

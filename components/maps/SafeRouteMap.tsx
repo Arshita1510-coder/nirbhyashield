@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { SafePoint, SafetyReport } from '@/lib/supabase/types';
+import { SafePoint, SafetyReport, SafetyHotspot } from '@/lib/supabase/types';
 
 interface RouteOption {
   id: string;
@@ -19,9 +19,10 @@ interface Props {
   selectedRouteId: string;
   safePoints: SafePoint[];
   safetyReports: SafetyReport[];
+  hotspots?: SafetyHotspot[];
 }
 
-export default function SafeRouteMap({ routes, selectedRouteId, safePoints, safetyReports }: Props) {
+export default function SafeRouteMap({ routes, selectedRouteId, safePoints, safetyReports, hotspots = [] }: Props) {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const L = require('leaflet');
@@ -32,6 +33,60 @@ export default function SafeRouteMap({ routes, selectedRouteId, safePoints, safe
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 19,
     }).addTo(map);
+
+    // Plot Safety Hotspots (Sunsaan Risky Areas vs High Crowd Safe Zones)
+    hotspots.forEach((hs) => {
+      const isRisky = hs.type === 'risky_sunsaan';
+      const circleColor = isRisky ? '#ef4444' : '#10b981';
+      const fillColor = isRisky ? '#f43f5e' : '#10b981';
+      const fillOpacity = isRisky ? 0.28 : 0.20;
+
+      // Draw Radius Circle
+      L.circle([hs.lat, hs.lng], {
+        color: circleColor,
+        fillColor: fillColor,
+        fillOpacity: fillOpacity,
+        weight: isRisky ? 2 : 2,
+        dashArray: isRisky ? '5, 5' : undefined,
+        radius: hs.radius_meters || 200,
+      }).addTo(map);
+
+      // Center Icon Badge
+      const badgeIconHtml = isRisky ? '🚨' : '🛡️';
+      const badgeBorder = isRisky ? '#f43f5e' : '#10b981';
+      const badgeBg = isRisky ? '#881337' : '#064e3b';
+
+      const customBadge = L.divIcon({
+        className: 'hs-icon',
+        html: `<div style="background:${badgeBg};border:2px solid ${badgeBorder};border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.5);">${badgeIconHtml}</div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
+
+      const popupHeaderBg = isRisky ? '#ffe4e6' : '#dcfce7';
+      const popupHeaderBorder = isRisky ? '#e11d48' : '#16a34a';
+      const popupHeaderTextColor = isRisky ? '#9f1239' : '#15803d';
+      const badgeTitle = isRisky ? '🚨 RISKY HOTSPOT (SUNSAAN AREA)' : '✅ SAFE ZONE (HIGH CROWD & WELL LIT)';
+
+      const popupContent = `
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: 12px; width: 230px; padding: 2px;">
+          <div style="background:${popupHeaderBg}; border-left: 4px solid ${popupHeaderBorder}; padding: 6px 8px; border-radius: 6px; margin-bottom: 6px;">
+            <span style="color:${popupHeaderTextColor}; font-weight: 800; font-size: 11px;">${badgeTitle}</span>
+          </div>
+          <div style="font-weight: 800; font-size: 13px; color: #0f172a; margin-bottom: 4px; line-height: 1.3;">${hs.name}</div>
+          <div style="color: #475569; margin-bottom: 6px; line-height: 1.3; font-size: 11px;">${hs.description}</div>
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 6px; font-size: 11px;">
+            <div><strong style="color: #334155;">👥 Footfall / Crowd:</strong> <span style="font-weight: 600; color: ${isRisky ? '#be123c' : '#15803d'};">${hs.crowd_level}</span></div>
+            <div><strong style="color: #334155;">💡 Street Lighting:</strong> <span style="font-weight: 600; color: ${isRisky ? '#be123c' : '#15803d'};">${hs.lighting_level}</span></div>
+            ${hs.risk_reason ? `<div style="color: #be123c; font-style: italic; margin-top: 4px; background: #fff1f2; padding: 4px; border-radius: 4px;">⚠️ ${hs.risk_reason}</div>` : ''}
+          </div>
+        </div>
+      `;
+
+      L.marker([hs.lat, hs.lng], { icon: customBadge })
+        .addTo(map)
+        .bindPopup(popupContent);
+    });
 
     // Plot Safe Points (Police, Pink Booths, Pharmacies)
     safePoints.forEach((sp) => {
@@ -88,7 +143,7 @@ export default function SafeRouteMap({ routes, selectedRouteId, safePoints, safe
     return () => {
       map.remove();
     };
-  }, [routes, selectedRouteId, safePoints, safetyReports]);
+  }, [routes, selectedRouteId, safePoints, safetyReports, hotspots]);
 
   return <div id="safe-route-map-container" className="w-full h-full min-h-[420px]"></div>;
 }

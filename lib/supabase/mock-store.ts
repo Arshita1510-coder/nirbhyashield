@@ -1,4 +1,4 @@
-import { SOSSession, SOSLocation, TrustedContact, SafePoint, ScamCheck, InterviewCheckin, SafetyReport } from './types';
+import { SOSSession, SOSLocation, TrustedContact, SafePoint, ScamCheck, InterviewCheckin, SafetyReport, SafetyHotspot } from './types';
 
 // Default initial state for local demo and state persistence
 const INITIAL_CONTACTS: TrustedContact[] = [
@@ -80,6 +80,55 @@ const INITIAL_REPORTS: SafetyReport[] = [
   },
 ];
 
+const INITIAL_HOTSPOTS: SafetyHotspot[] = [
+  {
+    id: 'hs-1',
+    name: '🚨 Sunsaan Stretch (Isolated Underpass & Unlit Alley)',
+    type: 'risky_sunsaan',
+    lat: 28.6160,
+    lng: 77.2110,
+    radius_meters: 220,
+    crowd_level: 'Very Low (Sunsaan / Isolated)',
+    lighting_level: '22% Unlit & Broken Lamps',
+    description: 'High risk stretch after dark. Low pedestrian footfall & poor street lighting index.',
+    risk_reason: 'Isolated underpass with no active CCTV or shops open late night.',
+  },
+  {
+    id: 'hs-2',
+    name: '🚨 Dark Construction Lane (Unmonitored Service Road)',
+    type: 'risky_sunsaan',
+    lat: 28.6210,
+    lng: 77.2140,
+    radius_meters: 180,
+    crowd_level: 'Sunsaan / Zero Crowd',
+    lighting_level: '15% Dim Streetlight Coverage',
+    description: 'Bypassed service road behind DIZ Area. Frequent hazard reports.',
+    risk_reason: 'Unlit construction debris and lack of regular police patrols.',
+  },
+  {
+    id: 'hs-3',
+    name: '🛡️ Safe Zone (Connaught Place High Crowd & Pink Booth Corridor)',
+    type: 'safe_crowded',
+    lat: 28.6180,
+    lng: 77.2150,
+    radius_meters: 260,
+    crowd_level: 'High (Active Foot Traffic)',
+    lighting_level: '99% Fully Illuminated LED Corridor',
+    description: 'Main commercial hub with 24/7 active footfall, open food outlets & Delhi Police Pink Booth.',
+  },
+  {
+    id: 'hs-4',
+    name: '🛡️ Safe Zone (Dr. RML Hospital Perimeter & Emergency Hub)',
+    type: 'safe_crowded',
+    lat: 28.6220,
+    lng: 77.2050,
+    radius_meters: 230,
+    crowd_level: 'Moderate-High (Continuous Movement)',
+    lighting_level: '95% High Illumination',
+    description: 'Constant ambulance movement, active security posts & well-lit main avenue.',
+  }
+];
+
 type Listener = () => void;
 
 class RakshaStore {
@@ -90,6 +139,7 @@ class RakshaStore {
   private scamChecks: ScamCheck[] = [];
   private interviewCheckins: InterviewCheckin[] = [];
   private safetyReports: SafetyReport[] = INITIAL_REPORTS;
+  private hotspots: SafetyHotspot[] = INITIAL_HOTSPOTS;
   private listeners: Set<Listener> = new Set();
 
   constructor() {
@@ -234,6 +284,10 @@ class RakshaStore {
 
   public getSafetyReports(): SafetyReport[] {
     return this.safetyReports;
+  }
+
+  public getHotspots(): SafetyHotspot[] {
+    return this.hotspots;
   }
 
   public addSafetyReport(report: Omit<SafetyReport, 'id' | 'created_at'>) {

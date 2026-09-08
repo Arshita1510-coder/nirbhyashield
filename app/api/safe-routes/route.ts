@@ -11,6 +11,7 @@ export async function POST(req: Request) {
 
     const safePoints = rakshaStore.getSafePoints();
     const safetyReports = rakshaStore.getSafetyReports();
+    const hotspots = rakshaStore.getHotspots();
 
     // Calculate safety scores for Fastest vs Safest Routes
     const fastestScore = Math.floor(62 + Math.random() * 8); // ~65/100
@@ -56,6 +57,7 @@ export async function POST(req: Request) {
       ],
       safe_points: safePoints,
       safety_reports: safetyReports,
+      hotspots: hotspots,
     });
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

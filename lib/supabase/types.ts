@@ -84,3 +84,17 @@ export interface SafetyReport {
   severity: 'low' | 'medium' | 'high';
   created_at: string;
 }
+
+export interface SafetyHotspot {
+  id: string;
+  name: string;
+  type: 'risky_sunsaan' | 'safe_crowded';
+  lat: number;
+  lng: number;
+  radius_meters: number;
+  crowd_level: string;
+  lighting_level: string;
+  description: string;
+  risk_reason?: string;
+}
+
