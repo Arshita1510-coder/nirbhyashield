@@ -344,67 +344,70 @@ export default function SOSController() {
           </div>
 
           {/* Secondary Trigger Modes */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-slate-800 text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-8 border-t border-slate-800 text-left">
             
             {/* Mode 1: Voice Recognition */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <Mic className="w-4 h-4 text-rose-400" /> Voice Distress Trigger
-                </span>
-                <button
-                  onClick={toggleVoiceListener}
-                  className={`text-xs px-2.5 py-1 rounded font-semibold transition-colors ${
-                    isListeningVoice
-                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30 animate-pulse'
-                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                  }`}
-                >
-                  {isListeningVoice ? 'Listening...' : 'Enable Listener'}
-                </button>
+            <div className="bg-slate-950/90 border border-slate-800/80 hover:border-rose-500/40 rounded-2xl p-5 md:p-6 space-y-3.5 transition-all shadow-lg group">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                  <Mic className="w-5 h-5" />
+                </div>
+                <span className="text-sm font-extrabold text-white">Voice Distress Trigger</span>
               </div>
-              <p className="text-[11px] text-slate-500">
-                Listens for keywords like <code className="text-rose-300">"Help me"</code> or <code className="text-rose-300">"Bachao"</code>.
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Listens for keywords like <code className="text-rose-300 font-bold bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-800/50">"Help me"</code> or <code className="text-rose-300 font-bold bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-800/50">"Bachao"</code>.
               </p>
+              <button
+                onClick={toggleVoiceListener}
+                className={`w-full text-xs px-3.5 py-2.5 rounded-xl font-bold transition-all shadow-md flex items-center justify-center gap-1.5 ${
+                  isListeningVoice
+                    ? 'bg-rose-500 text-white animate-pulse shadow-rose-900/50'
+                    : 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/50'
+                }`}
+              >
+                {isListeningVoice ? 'Listening Active...' : 'Enable Listener'}
+              </button>
               {voiceKeyword && (
-                <div className="text-[10px] text-slate-400 italic">Last heard: "{voiceKeyword}"</div>
+                <div className="text-[11px] text-rose-300 italic bg-slate-900 p-2 rounded-lg border border-slate-800">Last heard: "{voiceKeyword}"</div>
               )}
             </div>
 
             {/* Mode 2: Shake Detection */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <Radio className="w-4 h-4 text-rose-400" /> Shake Sensor Mode
-                </span>
-                <button
-                  onClick={() => triggerSOS('shake')}
-                  className="text-xs px-2.5 py-1 rounded font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700"
-                >
-                  Simulate Shake
-                </button>
+            <div className="bg-slate-950/90 border border-slate-800/80 hover:border-cyan-500/40 rounded-2xl p-5 md:p-6 space-y-3.5 transition-all shadow-lg group">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-cyan-500/15 text-cyan-400 border border-cyan-500/30">
+                  <Radio className="w-5 h-5" />
+                </div>
+                <span className="text-sm font-extrabold text-white">Shake Sensor Mode</span>
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-xs text-slate-300 leading-relaxed">
                 Triggers when phone experiences rapid double acceleration shake.
               </p>
+              <button
+                onClick={() => triggerSOS('shake')}
+                className="w-full text-xs px-3.5 py-2.5 rounded-xl font-bold bg-cyan-600 hover:bg-cyan-500 text-white shadow-md shadow-cyan-950/50 transition-all"
+              >
+                Simulate Shake
+              </button>
             </div>
 
             {/* Mode 3: Silent PIN Mode */}
-            <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-rose-400" /> Silent Duress PIN
-                </span>
-                <button
-                  onClick={() => triggerSOS('pin')}
-                  className="text-xs px-2.5 py-1 rounded font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700"
-                >
-                  Trigger Duress PIN
-                </button>
+            <div className="bg-slate-950/90 border border-slate-800/80 hover:border-amber-500/40 rounded-2xl p-5 md:p-6 space-y-3.5 transition-all shadow-lg group">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <span className="text-sm font-extrabold text-white">Silent Duress PIN</span>
               </div>
-              <p className="text-[11px] text-slate-500">
-                Silent alert disguised as standard unlocking screen.
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Silent emergency alert disguised as standard unlocking screen.
               </p>
+              <button
+                onClick={() => triggerSOS('pin')}
+                className="w-full text-xs px-3.5 py-2.5 rounded-xl font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-950/50 transition-all"
+              >
+                Trigger Duress PIN
+              </button>
             </div>
 
           </div>
