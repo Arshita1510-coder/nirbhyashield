@@ -9,7 +9,7 @@ import {
 import LiveTrackingMap from '@/components/maps/LiveTrackingMap';
 import { rakshaStore } from '@/lib/supabase/mock-store';
 import { supabaseService } from '@/lib/supabase/service';
-import { SOSLocation, SOSSession, SafetyReport } from '@/lib/supabase/types';
+import { SOSLocation, SOSSession, SafetyReport, TrustedContact } from '@/lib/supabase/types';
 
 const cardStyles = {
   active: 'from-rose-500/20 to-rose-950/20 border-rose-500/25 text-rose-400',
@@ -21,7 +21,7 @@ const cardStyles = {
 export default function ResponderPage() {
   const [activeSession, setActiveSession] = useState<SOSSession | null>(null);
   const [locations, setLocations] = useState<SOSLocation[]>([]);
-  const [contacts, setContacts] = useState(rakshaStore.getContacts());
+  const [contacts, setContacts] = useState<TrustedContact[]>([]);
   const [safetyReports, setSafetyReports] = useState<SafetyReport[]>([]);
 
   const refreshData = async () => {

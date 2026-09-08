@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { ShieldAlert, Navigation, Bus, AlertTriangle, Users, Database, Zap, Lock, ArrowRight, ShieldCheck, PhoneCall, Radio, CheckCircle2, Clock, Phone, MapPin, Shield, Activity, HelpCircle, FileText } from 'lucide-react';
 import { rakshaStore } from '@/lib/supabase/mock-store';
 import { supabaseService } from '@/lib/supabase/service';
-import { TrustedContact } from '@/lib/supabase/types';
+import { TrustedContact, SOSSession } from '@/lib/supabase/types';
 
 export default function OverviewPage() {
   const [contacts, setContacts] = useState<TrustedContact[]>([]);
-  const [activeSession, setActiveSession] = useState(rakshaStore.getActiveSession());
+  const [activeSession, setActiveSession] = useState<SOSSession | null>(null);
   const [newContactName, setNewContactName] = useState('');
   const [newContactPhone, setNewContactPhone] = useState('');
   const [callingModal, setCallingModal] = useState<{ number: string; title: string } | null>(null);
