@@ -292,12 +292,12 @@ export default function TransitSafetyPage() {
                     <ShieldAlert className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <span className="text-[10px] bg-rose-500/30 text-rose-300 px-2 py-0.5 rounded font-black uppercase border border-rose-500/40">
-                      Emergency Alert Active
+                    <span className="text-[10px] bg-rose-500/30 text-rose-300 px-2 py-0.5 rounded font-black uppercase border border-rose-500/40 tracking-wide">
+                      HIGH PRIORITY TRANSIT EMERGENCY DISPATCH
                     </span>
-                    <h4 className="text-base font-black text-white mt-1">TRANSIT DISPATCH ACTIVE ON SUPABASE REALTIME</h4>
+                    <h4 className="text-base font-black text-white mt-1">CRITICAL SOS BROADCAST DISPATCHED TO POLICE CONTROL ROOM (PCR 112)</h4>
                     <p className="text-xs text-rose-200">
-                      Vehicle ({activeSession.vehicle_id || vehicleId}) broadcasted to Police Hub & Emergency Contacts!
+                      Vehicle Registration (<strong className="text-white font-mono">{activeSession.vehicle_id || vehicleId}</strong>) & Live Route GPS Streamed to Police Command & Emergency Contacts.
                     </p>
                   </div>
                 </div>
@@ -308,7 +308,7 @@ export default function TransitSafetyPage() {
                     target="_blank"
                     className="bg-white text-rose-950 hover:bg-rose-100 font-extrabold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md"
                   >
-                    <ExternalLink className="w-3.5 h-3.5 text-rose-700" /> Open Live Map
+                    <ExternalLink className="w-3.5 h-3.5 text-rose-700" /> Open Live Tracking Map
                   </Link>
 
                   <button
@@ -318,7 +318,7 @@ export default function TransitSafetyPage() {
                     }}
                     className="bg-rose-950 hover:bg-rose-900 text-white font-bold px-3 py-2 rounded-xl text-xs border border-rose-400/40 transition-all"
                   >
-                    Resolve SOS
+                    De-escalate Alert
                   </button>
                 </div>
               </div>
