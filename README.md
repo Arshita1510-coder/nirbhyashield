@@ -54,20 +54,34 @@
 
 ## 📸 Application Screenshots
 
-### 1. Overview Command Hub & Safety Ecosystem
-![Overview Command Hub](docs/screenshots/overview.png)
-
-### 2. Core SOS Alert Engine
-![Core SOS Alert Engine](docs/screenshots/sos_engine.png)
-
-### 3. Spatial Safe Route Recommendation System
-![Spatial Safe Route Recommendation System](docs/screenshots/safe_routes.png)
-
-### 4. Public Transport Safety System
-![Public Transport Safety System](docs/screenshots/transit_safety.png)
-
-### 5. AI Job & Interview Scam Detector
-![AI Job & Interview Scam Detector](docs/screenshots/scam_detector.png)
+<table width="100%">
+  <tr>
+    <td width="50%" align="center">
+      <b>1. Overview Command Hub & Ecosystem</b><br/><br/>
+      <img src="docs/screenshots/overview.png" alt="Overview Command Hub" width="100%" />
+    </td>
+    <td width="50%" align="center">
+      <b>2. Core SOS Alert Engine</b><br/><br/>
+      <img src="docs/screenshots/sos_engine.png" alt="Core SOS Alert Engine" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <b>3. Spatial Safe Route System</b><br/><br/>
+      <img src="docs/screenshots/safe_routes.png" alt="Spatial Safe Route Recommendation System" width="100%" />
+    </td>
+    <td width="50%" align="center">
+      <b>4. Public Transport Safety System</b><br/><br/>
+      <img src="docs/screenshots/transit_safety.png" alt="Public Transport Safety System" width="100%" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <b>5. AI Job & Interview Scam Detector</b><br/><br/>
+      <img src="docs/screenshots/scam_detector.png" alt="AI Job & Interview Scam Detector" width="65%" />
+    </td>
+  </tr>
+</table>
 
 ---
 
