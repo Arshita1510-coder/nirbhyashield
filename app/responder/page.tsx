@@ -48,7 +48,7 @@ export default function ResponderPage() {
   ];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 xl:relative xl:left-1/2 xl:w-[min(calc(100vw-3rem),1520px)] xl:-translate-x-1/2">
       <section className="grid gap-5 border-b border-slate-800/90 pb-5 xl:grid-cols-[1fr_36rem]">
         <div className="pt-1">
           <div className="inline-flex items-center gap-2 rounded-full border border-rose-500/25 bg-rose-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-rose-300">
@@ -74,7 +74,7 @@ export default function ResponderPage() {
       </section>
 
       <section className="grid gap-5 xl:grid-cols-[0.88fr_1.25fr_0.88fr]">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-xl">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-xl xl:min-h-[382px]">
           <div className="mb-3 flex items-center justify-between px-1"><h2 className="flex items-center gap-2 text-sm font-bold text-white"><span className="h-2 w-2 rounded-full bg-rose-400 shadow-[0_0_10px_rgba(251,113,133,0.9)]" /> Live Alert Feed</h2><span className="text-xs text-slate-400">Live queue</span></div>
           <div className="space-y-2">
             {activeSession ? <AlertRow icon={ShieldAlert} title="SOS Activated" subtitle={`Trigger: ${activeSession.trigger_type.replace('_', ' ')}`} tone="rose" badge="Active" /> : <AlertRow icon={ShieldCheck} title="No live SOS alerts" subtitle="The emergency queue is clear" tone="emerald" badge="Safe" />}
@@ -82,13 +82,13 @@ export default function ResponderPage() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-xl">
+        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-xl xl:min-h-[382px]">
           <div className="mb-3 flex items-center justify-between px-1"><h2 className="flex items-center gap-2 text-sm font-bold text-white"><MapPin className="h-4 w-4 text-cyan-400" /> Active Incidents Map</h2><span className="text-xs text-slate-400">Realtime view</span></div>
-          <div className="h-[270px] overflow-hidden rounded-xl border border-slate-800 bg-slate-950"><LiveTrackingMap locations={locations} /></div>
+          <div className="h-[270px] overflow-hidden rounded-xl border border-slate-800 bg-slate-950 xl:h-[330px]"><LiveTrackingMap locations={locations} /></div>
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 px-1 text-[10px] text-slate-400"><span className="text-rose-400">● SOS Alert</span><span className="text-amber-400">▲ Route Deviation</span><span className="text-blue-400">● Transit Alert</span>{latestLocation && <span className="ml-auto font-mono text-slate-500">{latestLocation.lat.toFixed(4)}, {latestLocation.lng.toFixed(4)}</span>}</div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-xl">
+        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 shadow-xl xl:min-h-[382px]">
           <div className="mb-3 flex items-center justify-between px-1"><h2 className="flex items-center gap-2 text-sm font-bold text-white"><Activity className="h-4 w-4 text-violet-400" /> Alert Analytics</h2><span className="text-xs text-slate-400">Live totals</span></div>
           <div className="grid grid-cols-3 gap-2">
             <AnalyticsCard label="Alerts" value={activeCount + safetyReports.length} color="rose" />
