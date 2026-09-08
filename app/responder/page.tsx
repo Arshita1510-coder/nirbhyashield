@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
-  Activity, AlertTriangle, Battery, CheckCircle2, ChevronRight, Clock, Eye,
+  Activity, AlertTriangle, ArrowLeft, Battery, CheckCircle2, ChevronRight, Clock, Eye,
   MapPin, PhoneCall, Radio, ShieldAlert, ShieldCheck, Users,
 } from 'lucide-react';
 import LiveTrackingMap from '@/components/maps/LiveTrackingMap';
@@ -51,7 +51,14 @@ export default function ResponderPage() {
     <div className="space-y-5 xl:relative xl:left-1/2 xl:w-[min(calc(100vw-3rem),1520px)] xl:-translate-x-1/2">
       <section className="grid gap-5 border-b border-slate-800/90 pb-5 xl:grid-cols-[1fr_36rem]">
         <div className="pt-1">
-          <div className="inline-flex items-center gap-2 rounded-full border border-rose-500/25 bg-rose-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-rose-300">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700/80 bg-slate-900/70 px-2.5 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:border-slate-600 hover:bg-slate-800 hover:text-white"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to Home
+          </Link>
+          <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-rose-500/25 bg-rose-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-rose-300">
             <Radio className="h-3.5 w-3.5" /> Admin & Police Responder Command Hub
           </div>
           <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Live Emergency Dispatch & Safety Admin Portal</h1>

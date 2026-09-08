@@ -26,6 +26,7 @@ const adminWorkspaceLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const isResponderPage = pathname === '/responder';
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -59,7 +60,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <nav aria-label="Primary navigation" className="hidden 2xl:flex min-w-0 flex-1 items-center justify-center gap-0.5">{navLinks()}</nav>
+          {!isResponderPage && <nav aria-label="Primary navigation" className="hidden 2xl:flex min-w-0 flex-1 items-center justify-center gap-0.5">{navLinks()}</nav>}
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2">
             <div className="relative">
@@ -107,7 +108,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <nav aria-label="Primary navigation" className="2xl:hidden flex gap-0.5 overflow-x-auto border-t border-slate-800/70 px-2 py-1.5 [scrollbar-width:none] sm:px-4">{navLinks(true)}</nav>
+      {!isResponderPage && <nav aria-label="Primary navigation" className="2xl:hidden flex gap-0.5 overflow-x-auto border-t border-slate-800/70 px-2 py-1.5 [scrollbar-width:none] sm:px-4">{navLinks(true)}</nav>}
     </header>
     <ProfileSettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} initialTab={settingsTab} />
     </>
