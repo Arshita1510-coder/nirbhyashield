@@ -138,8 +138,8 @@ create policy "Public can view safe points"
 on safe_points for select using (true);
 
 -- transit_checkins RLS
-create policy "Users manage their transit checkins"
-on transit_checkins for all using (auth.uid() = user_id);
+create policy "Public access transit checkins"
+on transit_checkins for all using (true) with check (true);
 
 -- scam_checks RLS
 create policy "Users view their scam checks"

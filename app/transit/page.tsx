@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Bus, QrCode, ShieldAlert, CheckCircle2, AlertTriangle, Radio, Send, MapPin, Users } from 'lucide-react';
 import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { supabaseService } from '@/lib/supabase/service';
 
 export default function TransitSafetyPage() {
   const [vehicleId, setVehicleId] = useState('DL-01-PC-9821');
@@ -12,21 +13,22 @@ export default function TransitSafetyPage() {
   const [hazardDesc, setHazardDesc] = useState('');
   const [reportSubmitted, setReportSubmitted] = useState(false);
 
-  const handleVehicleCheckin = (e: React.FormEvent) => {
+  const handleVehicleCheckin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (vehicleId) {
+      await supabaseService.addTransitCheckin(vehicleId, routeName);
       setIsCheckedIn(true);
     }
   };
 
-  const handleTransitPanic = () => {
-    nirbhayaStore.triggerSOS('transit', 28.6139, 77.2090, vehicleId);
+  const handleTransitPanic = async () => {
+    await supabaseService.createSOSSession('transit', vehicleId);
   };
 
-  const handleReportSubmit = (e: React.FormEvent) => {
+  const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (hazardDesc) {
-      nirbhayaStore.addSafetyReport({
+      await supabaseService.addSafetyReport({
         category: hazardCategory,
         description: `[Transit Vehicle ${vehicleId}] ${hazardDesc}`,
         lat: 28.6139,

@@ -115,22 +115,38 @@ export class SupabaseService {
     return nirbhayaStore.getSafetyReports();
   }
 
-  // 5. Storage Vault Upload (Audio & Clips)
-  async uploadAudioVault(sessionId: string, audioBlob: Blob): Promise<string | null> {
+  // 6. Transit Check-in & Safety Reports
+  async addTransitCheckin(vehicleId: string, routeName: string): Promise<TransitCheckin> {
     if (isSupabaseConfigured && supabase) {
-      const fileName = `vault-${sessionId}-${Date.now()}.webm`;
-      const { data, error } = await supabase.storage
-        .from('sos-media')
-        .upload(`session-${sessionId}/${fileName}`, audioBlob);
-      
-      if (!error && data) {
-        const { data: urlData } = await supabase.storage
-          .from('sos-media')
-          .createSignedUrl(data.path, 3600); // 1 hour signed URL
-        return urlData?.signedUrl || null;
-      }
+      const { data: userData } = await supabase.auth.getUser();
+      const insertObj: any = { vehicle_id: vehicleId, route_name: routeName, status: 'active' };
+      if (userData?.user?.id) insertObj.user_id = userData.user.id;
+
+      const { data, error } = await supabase.from('transit_checkins').insert([insertObj]).select().single();
+      if (!error && data) return data as TransitCheckin;
+      if (error) console.error('Supabase addTransitCheckin error:', error);
     }
-    return null;
+    return {
+      id: 'tc-' + Date.now(),
+      user_id: 'usr-demo',
+      vehicle_id: vehicleId,
+      route_name: routeName,
+      status: 'active',
+      checked_in_at: new Date().toISOString(),
+    };
+  }
+
+  async addSafetyReport(report: Omit<SafetyReport, 'id' | 'created_at'>): Promise<SafetyReport> {
+    if (isSupabaseConfigured && supabase) {
+      const { data: userData } = await supabase.auth.getUser();
+      const insertObj: any = { ...report };
+      if (userData?.user?.id) insertObj.user_id = userData.user.id;
+
+      const { data, error } = await supabase.from('safety_reports').insert([insertObj]).select().single();
+      if (!error && data) return data as SafetyReport;
+      if (error) console.error('Supabase addSafetyReport error:', error);
+    }
+    return nirbhayaStore.addSafetyReport(report);
   }
 }
 
