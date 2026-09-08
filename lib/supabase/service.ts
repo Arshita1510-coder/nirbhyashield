@@ -89,7 +89,7 @@ export class SupabaseService {
         .subscribe();
 
       return () => {
-        supabase.removeChannel(channel);
+        supabase?.removeChannel(channel);
       };
     }
 
