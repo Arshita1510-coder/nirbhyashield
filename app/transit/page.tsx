@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Bus, Train, Car, QrCode, ShieldAlert, CheckCircle2, AlertTriangle, Radio, Send, MapPin, Navigation } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bus, Train, Car, QrCode, ShieldAlert, CheckCircle2, AlertTriangle, Radio, Send, MapPin, Navigation, ExternalLink } from 'lucide-react';
 import { nirbhayaStore } from '@/lib/supabase/mock-store';
 import { supabaseService } from '@/lib/supabase/service';
+import { SOSSession } from '@/lib/supabase/types';
+import Link from 'next/link';
 
 type TransitMode = 'bus' | 'train' | 'auto' | 'cab' | 'other';
 
@@ -16,6 +18,14 @@ export default function TransitSafetyPage() {
   const [hazardCategory, setHazardCategory] = useState<'poor_lighting' | 'harassment' | 'isolated' | 'suspicious_activity' | 'unmonitored'>('harassment');
   const [hazardDesc, setHazardDesc] = useState('');
   const [reportSubmitted, setReportSubmitted] = useState(false);
+  const [activeSession, setActiveSession] = useState<SOSSession | null>(null);
+
+  useEffect(() => {
+    setActiveSession(nirbhayaStore.getActiveSession());
+    return nirbhayaStore.subscribe(() => {
+      setActiveSession(nirbhayaStore.getActiveSession());
+    });
+  }, []);
 
   const handleModeChange = (mode: TransitMode) => {
     setTransitMode(mode);
@@ -50,7 +60,8 @@ export default function TransitSafetyPage() {
 
   const handleTransitPanic = async () => {
     const displayMode = transitMode === 'other' ? (customModeLabel || 'Other Transport') : transitMode.toUpperCase();
-    await supabaseService.createSOSSession('transit', `${displayMode}: ${vehicleId}`);
+    const session = await supabaseService.createSOSSession('transit', `${displayMode}: ${vehicleId}`);
+    setActiveSession(session);
   };
 
   const handleReportSubmit = async (e: React.FormEvent) => {
@@ -272,6 +283,48 @@ export default function TransitSafetyPage() {
             </form>
           </div>
 
+          {/* Active Emergency Panic Notification Banner */}
+          {activeSession && activeSession.status === 'active' && (
+            <div className="bg-gradient-to-r from-rose-950 via-rose-900 to-slate-950 border-2 border-rose-600 rounded-2xl p-5 text-white space-y-3 shadow-2xl animate-pulse">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-rose-600 flex items-center justify-center animate-ping shrink-0">
+                    <ShieldAlert className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] bg-rose-500/30 text-rose-300 px-2 py-0.5 rounded font-black uppercase border border-rose-500/40">
+                      Emergency Alert Active
+                    </span>
+                    <h4 className="text-base font-black text-white mt-1">TRANSIT DISPATCH ACTIVE ON SUPABASE REALTIME</h4>
+                    <p className="text-xs text-rose-200">
+                      Vehicle ({activeSession.vehicle_id || vehicleId}) broadcasted to Police Hub & Emergency Contacts!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <Link
+                    href={`/track/${activeSession.tracking_token}`}
+                    target="_blank"
+                    className="bg-white text-rose-950 hover:bg-rose-100 font-extrabold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-rose-700" /> Open Live Map
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      nirbhayaStore.resolveSOS(activeSession.id, 'resolved');
+                      setActiveSession(null);
+                    }}
+                    className="bg-rose-950 hover:bg-rose-900 text-white font-bold px-3 py-2 rounded-xl text-xs border border-rose-400/40 transition-all"
+                  >
+                    Resolve SOS
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* In-Transit Emergency Panic Button Card */}
           <div className="bg-gradient-to-r from-rose-950/80 via-slate-900 to-slate-950 border border-rose-900/60 rounded-2xl p-6 space-y-4 shadow-xl">
             <div className="flex items-center justify-between">
@@ -285,10 +338,14 @@ export default function TransitSafetyPage() {
 
               <button
                 onClick={handleTransitPanic}
-                className="px-6 py-4 bg-rose-600 hover:bg-rose-500 text-white font-black text-sm rounded-xl shadow-lg shadow-rose-900/50 flex items-center gap-2 transition-transform hover:scale-105 active:scale-95 border border-rose-400/40"
+                className={`px-6 py-4 font-black text-sm rounded-xl shadow-lg flex items-center gap-2 transition-transform hover:scale-105 active:scale-95 border ${
+                  activeSession && activeSession.status === 'active'
+                    ? 'bg-rose-700 text-white animate-bounce border-rose-400 shadow-rose-900/80'
+                    : 'bg-rose-600 hover:bg-rose-500 text-white border-rose-400/40 shadow-rose-900/50'
+                }`}
               >
                 <ShieldAlert className="w-5 h-5 animate-pulse" />
-                <span>TRANSIT PANIC</span>
+                <span>{activeSession && activeSession.status === 'active' ? 'PANIC BROADCASTING...' : 'TRANSIT PANIC'}</span>
               </button>
             </div>
           </div>
