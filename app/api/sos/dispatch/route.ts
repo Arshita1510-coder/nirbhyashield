@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
-import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { supabaseService } from '@/lib/supabase/service';
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { trigger_type, lat, lng, user_id } = body;
 
-    const session = nirbhayaStore.triggerSOS(trigger_type || 'button', lat || 28.6139, lng || 77.2090);
-    const contacts = nirbhayaStore.getContacts();
+    const session = await supabaseService.createSOSSession(trigger_type || 'button');
+    await supabaseService.addSOSLocation(session.id, lat || 28.6139, lng || 77.2090, 90, 0);
+    const contacts = await supabaseService.getContacts();
 
     const originHost = req.headers.get('host') || 'localhost:3000';
     const trackingUrl = `http://${originHost}/track/${session.tracking_token}`;

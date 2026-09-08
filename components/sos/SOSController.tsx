@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { nirbhayaStore } from '@/lib/supabase/mock-store';
+import { supabaseService } from '@/lib/supabase/service';
 import { SOSSession, SOSLocation } from '@/lib/supabase/types';
 import { ShieldAlert, Mic, Phone, CheckCircle2, Copy, Radio, Volume2, ShieldCheck, MapPin, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -46,12 +47,12 @@ export default function SOSController() {
       startAudioRecording();
 
       // Simulate live GPS breadcrumb movement every 4 seconds
-      intervalRef.current = setInterval(() => {
+      intervalRef.current = setInterval(async () => {
         const lastLoc = locations[locations.length - 1] || { lat: 28.6139, lng: 77.2090 };
         const nextLat = lastLoc.lat + (Math.random() - 0.5) * 0.001;
         const nextLng = lastLoc.lng + (Math.random() - 0.5) * 0.001;
         const battery = Math.max(10, (lastLoc.battery_pct || 85) - 1);
-        nirbhayaStore.addLocationBreadcrumb(activeSession.id, nextLat, nextLng, battery, 6.5);
+        await supabaseService.addSOSLocation(activeSession.id, nextLat, nextLng, battery, 6.5);
       }, 4000);
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
