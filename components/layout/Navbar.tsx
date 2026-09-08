@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { AlertTriangle, Bell, Bus, CheckCircle2, ChevronDown, Home, Navigation, Radio, ShieldAlert, ShieldCheck, User, Key, Settings, LogOut } from 'lucide-react';
+import { AlertTriangle, Bell, Bus, CheckCircle2, ChevronDown, Home, Navigation, ShieldAlert, ShieldCheck, Settings, LogOut } from 'lucide-react';
 import ProfileSettingsModal from './ProfileSettingsModal';
 
 const navItems = [
